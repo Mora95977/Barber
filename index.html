@@ -36,6 +36,12 @@
         button:hover {
             background-color: #218838;
         }
+        .cancel-btn {
+            background-color: #dc3545;
+        }
+        .cancel-btn:hover {
+            background-color: #c82333;
+        }
         .logo {
             width: 150px;
             margin-bottom: 20px;
@@ -84,8 +90,13 @@
         <input type="time" id="hora">
         
         <p><strong>Por favor, llega 10 minutos antes de tu cita.</strong></p>
+        <p><strong>Horarios de atención:</strong><br>
+            Lunes a Jueves: 8:00am - 6:30pm<br>
+            Viernes y Sábados: 8:00am - 8:00pm
+        </p>
         
         <button onclick="reservarCita()">Confirmar Cita</button>
+        <button class="cancel-btn" onclick="cancelarCita()">Cancelar Cita</button>
     </div>
 
     <script>
@@ -105,9 +116,9 @@
             let barbero = document.getElementById("barbero").value;
             let fecha = document.getElementById("fecha").value;
             let hora = document.getElementById("hora").value;
-            let telefonoWhatsApp = "+50684021824"; // Reemplazar con el número de WhatsApp de la barbería
-
+            let telefonoWhatsApp = "+50684021824";
             let citas = JSON.parse(localStorage.getItem("citas")) || {};
+
             if (!citas[barbero]) citas[barbero] = [];
             let citaExistente = citas[barbero].find(c => c.fecha === fecha && c.hora === hora);
 
@@ -122,11 +133,27 @@
                 let mensaje = `Hola, soy ${nombre}. Me gustaría agendar una cita para ${servicio} con ${barbero} el ${fecha} a las ${hora}. Por favor, llegaré 10 minutos antes.`;
                 let url = `https://wa.me/${telefonoWhatsApp}?text=${encodeURIComponent(mensaje)}`;
                 window.open(url, "_blank");
-                alert("Cita reservada con éxito. Si deseas cancelar, contacta a la barbería.");
+                alert("Cita reservada con éxito.");
             } else {
                 alert("Por favor, completa todos los campos");
+            }
+        }
+
+        function cancelarCita() {
+            let barbero = document.getElementById("barbero").value;
+            let fecha = document.getElementById("fecha").value;
+            let hora = document.getElementById("hora").value;
+            let citas = JSON.parse(localStorage.getItem("citas")) || {};
+            
+            if (citas[barbero]) {
+                citas[barbero] = citas[barbero].filter(c => c.fecha !== fecha || c.hora !== hora);
+                localStorage.setItem("citas", JSON.stringify(citas));
+                alert("Cita cancelada. El horario ha sido liberado.");
+            } else {
+                alert("No hay una cita registrada para cancelar.");
             }
         }
     </script>
 </body>
 </html>
+
