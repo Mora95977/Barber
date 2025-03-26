@@ -5,89 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Salón de Belleza y Barbería Fusión</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            text-align: center; 
-            padding: 20px; 
-            background-color: #f8f9fa;
-            color: #333;
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background: url('barberia_fondo.jpg') no-repeat center center/cover;
+            color: white;
         }
-        .container { 
-            max-width: 500px; 
-            margin: auto; 
-            background: #ffffff;
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: rgba(0, 0, 0, 0.8);
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
         }
-        input, select, button { 
-            width: 100%; 
-            padding: 10px; 
-            margin: 5px 0; 
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
             border: 1px solid #ddd;
             border-radius: 5px;
         }
         button {
-            background-color: #28a745;
-            color: white;
+            background-color: #ffcc00;
+            color: black;
             font-size: 16px;
             cursor: pointer;
+            font-weight: bold;
         }
         button:hover {
-            background-color: #218838;
+            background-color: #e6b800;
         }
         .logo {
             width: 150px;
             margin-bottom: 20px;
         }
-        .service-image {
-            width: 100%;
-            border-radius: 10px;
-            margin-top: 10px;
-        }
-        /* Estilo para el aviso emergente */
-        #aviso {
+        .alerta {
             display: none;
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: #ffcc00;
+            background: #ff3333;
+            color: white;
             padding: 15px;
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
-            width: 80%;
-            max-width: 400px;
-            text-align: left;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
         }
-        #aviso button {
-            background: red;
-            color: white;
-            border: none;
-            padding: 5px 10px;
+        .close-btn {
             cursor: pointer;
-            margin-top: 10px;
+            font-weight: bold;
+            float: right;
         }
     </style>
 </head>
 <body>
-
-    <!-- Aviso emergente -->
-    <div id="aviso">
-        <p><strong>Horario Semana Santa:</strong><br>
-        Lunes 14, Martes 15 y Miércoles 16 de abril el Salón de belleza y barbería Fusión funcionará con horario normal (8:00am - 6:30pm).<br>
-        Jueves, Viernes y Sábado estará <strong>CERRADO</strong>.<br>
-        Volvemos el lunes con horario normal. ¡Gracias!</p>
-        <button onclick="document.getElementById('aviso').style.display='none'">Cerrar</button>
+    <div id="aviso" class="alerta">
+        <span class="close-btn" onclick="cerrarAviso()">&times;</span>
+        <p><strong>Horario de Semana Santa:</strong><br>
+            Lunes 14, Martes 15 y Miércoles 16 de abril: 8:00am - 6:30pm.<br>
+            Jueves, Viernes y Sábado: CERRADO.<br>
+            Volvemos el lunes con horarios normales.</p>
     </div>
-
+    
     <img src="logo.jpg" alt="Logo Barbería" class="logo">
-    <h1 style="color: #007bff;">Salón de Belleza y Barbería Fusión</h1>
+    <h1 style="color: #ffcc00;">Salón de Belleza y Barbería Fusión</h1>
     <h2>Reserva tu cita</h2>
     
     <div class="container">
-        <img src="2..jpg" alt="Imagen de Barbería" class="service-image">
-        
         <label for="nombre">Nombre:</label>
         <input type="text" id="nombre" placeholder="Tu nombre">
         
@@ -102,7 +88,7 @@
             <option value="Pedicura">Pedicura</option>
         </select>
         
-        <label for="barbero">Elige tu barbero o Estilista:</label>
+        <label for="barbero">Elige tu barbero:</label>
         <select id="barbero">
             <option value="Pablo Barbershop">Pablo Barbershop</option>
             <option value="Axel Barbershop">Axel Barbershop</option>
@@ -122,19 +108,12 @@
     </div>
 
     <script>
-        // Mostrar el aviso al cargar la página
         window.onload = function() {
-            document.getElementById('aviso').style.display = 'block';
-        };
-
-        function cargarHorasDisponibles() {
-            let fecha = document.getElementById("fecha").value;
-            let barbero = document.getElementById("barbero").value;
-            let horaInput = document.getElementById("hora");
-            let citas = JSON.parse(localStorage.getItem("citas")) || {};
-            if (!citas[barbero]) citas[barbero] = [];
-            horaInput.disabled = false;
-            horaInput.value = "";
+            document.getElementById("aviso").style.display = "block";
+        }
+        
+        function cerrarAviso() {
+            document.getElementById("aviso").style.display = "none";
         }
 
         function reservarCita() {
@@ -143,24 +122,13 @@
             let barbero = document.getElementById("barbero").value;
             let fecha = document.getElementById("fecha").value;
             let hora = document.getElementById("hora").value;
-            let telefonoWhatsApp = "+50684021824"; // Reemplazar con el número de WhatsApp de la barbería
-
-            let citas = JSON.parse(localStorage.getItem("citas")) || {};
-            if (!citas[barbero]) citas[barbero] = [];
-            let citaExistente = citas[barbero].find(c => c.fecha === fecha && c.hora === hora);
-
-            if (citaExistente) {
-                alert("Esa hora ya está reservada con este barbero. Por favor, elige otra.");
-                return;
-            }
+            let telefonoWhatsApp = "+506XXXXXXXX";
 
             if (nombre && servicio && barbero && fecha && hora) {
-                citas[barbero].push({ fecha, hora });
-                localStorage.setItem("citas", JSON.stringify(citas));
-                let mensaje = `Hola, soy ${nombre}. Me gustaría agendar una cita para ${servicio} con ${barbero} el ${fecha} a las ${hora}. Por favor, llegaré 10 minutos antes.`;
+                alert("Cita reservada con éxito. Si deseas cancelar, contacta a la barbería.");
+                let mensaje = `Hola, soy ${nombre}. Me gustaría agendar una cita para ${servicio} con ${barbero} el ${fecha} a las ${hora}.`;
                 let url = `https://wa.me/${telefonoWhatsApp}?text=${encodeURIComponent(mensaje)}`;
                 window.open(url, "_blank");
-                alert("Cita reservada con éxito. Si deseas cancelar, contacta a la barbería.");
             } else {
                 alert("Por favor, completa todos los campos");
             }
