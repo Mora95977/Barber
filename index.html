@@ -55,15 +55,19 @@
             display: block;
             position: relative;
         }
-        #holidayNotice button {
+        #closeNotice {
             position: absolute;
-            top: 5px;
-            right: 10px;
+            top: -10px;
+            right: -10px;
             background: red;
             color: white;
             border: none;
-            padding: 5px;
+            padding: 5px 10px;
+            border-radius: 50%;
             cursor: pointer;
+        }
+        #adminSection {
+            display: none;
         }
     </style>
 </head>
@@ -74,9 +78,9 @@
     </header>
     
     <div id="holidayNotice">
-        <button onclick="closeNotice()">X</button>
+        <button id="closeNotice" onclick="closeNotice()">X</button>
         <p><strong>Horario de Semana Santa:</strong><br>
-        Lunes 14, Martes 15 y Miércoles 16, salón de belleza y barbería funcionará con el horario de 8am a 7:30pm. <br>
+        Lunes 14, Martes 15 y Miércoles 16, salón de belleza y barbería Fusión funcionará con el horario de 8am a 7:30pm. <br>
         Los días Jueves, Viernes y Sábado estará <strong>CERRADO</strong>.</p>
     </div>
 
@@ -115,7 +119,7 @@
         </form>
     </section>
 
-    <section id="adminSection" style="display: none;">
+    <section id="adminSection">
         <h2>Administración</h2>
         <button onclick="generateExcel()">Generar Reporte de Citas</button>
     </section>
@@ -123,18 +127,6 @@
     <script>
         function closeNotice() {
             document.getElementById("holidayNotice").style.display = "none";
-        }
-
-        function formatTimeTo12Hour(time) {
-            let [hour, minutes] = time.split(":");
-            let period = "AM";
-            hour = parseInt(hour);
-            if (hour >= 12) {
-                period = "PM";
-                if (hour > 12) hour -= 12;
-            }
-            if (hour == 0) hour = 12;
-            return `${hour}:${minutes} ${period}`;
         }
 
         function sendWhatsApp() {
@@ -149,11 +141,19 @@
                 return;
             }
             
-            let formattedTime = formatTimeTo12Hour(time);
-            let message = `Hola, quiero agendar una cita:\n\n👤 Nombre: ${name}\n✂️ Servicio: ${service}\n💈 Barbero: ${barber}\n Estlista: ${Stylist}\n 📅 Fecha: ${date}\n🕒 Hora: ${formattedTime}\n\nPor favor, llegar 10 minutos antes.`;
+            let message = `Hola, quiero agendar una cita:\n\n👤 Nombre: ${name}\n✂️ Servicio: ${service}\n💈 Barbero: ${barber}\n Estlista: ${stylist}\n 📅 Fecha: ${date}\n🕒 Hora: ${time}\n\nPor favor, llegar 10 minutos antes.`;
             
             let whatsappUrl = `https://api.whatsapp.com/send?phone=50684021824&text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, "_blank");
+        }
+
+        function requestAdminAccess() {
+            let password = prompt("Ingrese la clave de administrador:");
+            if (password === "Pmyv1234") {
+                document.getElementById("adminSection").style.display = "block";
+            } else {
+                alert("Clave incorrecta");
+            }
         }
     </script>
 </body>
