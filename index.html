@@ -47,14 +47,39 @@
         button:hover {
             background-color: #218838;
         }
+        #holidayNotice {
+            background: #ffcc00;
+            padding: 15px;
+            margin: 20px;
+            border-radius: 5px;
+            display: block;
+            position: relative;
+        }
+        #holidayNotice button {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background: red;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <header>
-        <img src="https://github.com/Mora95977/Barber/blob/main/logo.jpg?raw=true" alt="Logo Barbería Fusión">
+        <img src="logo.png" alt="Logo Barbería Fusión">
         <h1>Salón de Belleza y Barbería Fusión</h1>
     </header>
     
+    <div id="holidayNotice">
+        <button onclick="closeNotice()">X</button>
+        <p><strong>Horario de Semana Santa:</strong><br>
+        Lunes 14, Martes 15 y Miércoles 16, salón de belleza y barbería funcionará con el horario de 8am a 7:30pm. <br>
+        Los días Jueves, Viernes y Sábado estará <strong>CERRADO</strong>.</p>
+    </div>
+
     <section>
         <p><strong>Por favor, llegue 10 minutos antes de su cita.</strong></p>
         <form id="appointmentForm">
@@ -96,6 +121,10 @@
     </section>
 
     <script>
+        function closeNotice() {
+            document.getElementById("holidayNotice").style.display = "none";
+        }
+
         function formatTimeTo12Hour(time) {
             let [hour, minutes] = time.split(":");
             let period = "AM";
@@ -121,45 +150,15 @@
             }
             
             let formattedTime = formatTimeTo12Hour(time);
-            let message = `Hola, quiero agendar una cita:\n\n👤 Nombre: ${name}\n✂️ Servicio: ${service}\n💈 Barbero/Estilista: ${barber}\n📅 Fecha: ${date}\n🕒 Hora: ${formattedTime}\n\nPor favor, llegar 10 minutos antes.`;
+            let message = `Hola, quiero agendar una cita:\n\n👤 Nombre: ${name}\n✂️ Servicio: ${service}\n💈 Barbero: ${barber}\n Estilista ${stylist}\n:📅 Fecha: ${date}\n🕒 Hora: ${formattedTime}\n\nPor favor, llegar 10 minutos antes.`;
             
             let whatsappUrl = `https://api.whatsapp.com/send?phone=50684021824&text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, "_blank");
         }
-
-        function generateExcel() {
-            let data = [
-                ["Nombre", "Servicio", "Barbero/Estilista", "Fecha", "Hora"]
-            ];
-            
-            let row = [
-                document.getElementById("name").value,
-                document.getElementById("service").value,
-                document.getElementById("barber").value,
-                document.getElementById("date").value,
-                document.getElementById("time").value
-            ];
-            data.push(row);
-            
-            let ws = XLSX.utils.aoa_to_sheet(data);
-            let wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Citas");
-            XLSX.writeFile(wb, "citas.xlsx");
-        }
-
-        function adminLogin() {
-            let password = prompt("Ingrese la clave de administrador:");
-            if (password === "Pmyv1234") { // Cambia "clave123" por tu clave personalizada
-                document.getElementById("adminSection").style.display = "block";
-            } else {
-                alert("Clave incorrecta");
-            }
-        }
-
-        console.log("Escribe 'adminLogin()' en la consola para acceder al panel de administración.");
     </script>
 </body>
 </html>
+
 
 
 
