@@ -4,169 +4,162 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Salón de Belleza y Barbería Fusión</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            text-align: center; 
-            padding: 20px; 
-            background-color: #f8f9fa;
-            color: #333;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 0;
+            padding: 0;
         }
-        .container { 
-            max-width: 500px; 
-            margin: auto; 
-            background: #ffffff;
+        header {
+            background-color: #222;
+            color: #fff;
+            padding: 20px;
+        }
+        header img {
+            width: 150px;
+        }
+        section {
+            background: #fff;
+            max-width: 400px;
+            margin: 20px auto;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        input, select, button { 
-            width: 100%; 
-            padding: 10px; 
-            margin: 5px 0; 
-            border: 1px solid #ddd;
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
             border-radius: 5px;
         }
         button {
             background-color: #28a745;
             color: white;
             font-size: 16px;
+            border: none;
             cursor: pointer;
         }
         button:hover {
             background-color: #218838;
         }
-        .logo {
-            width: 150px;
-            margin-bottom: 20px;
-        }
-        .service-image {
-            width: 100%;
-            border-radius: 10px;
-            margin-top: 10px;
-        }
-        /* Estilo para el aviso emergente */
-        #aviso {
-            display: none;
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #ffcc00;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
-            width: 80%;
-            max-width: 400px;
-            text-align: left;
-        }
-        #aviso button {
-            background: red;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
     </style>
 </head>
 <body>
-
-    <!-- Aviso emergente -->
-    <div id="aviso">
-        <p><strong>Horario Semana Santa:</strong><br>
-        Lunes 14, Martes 15 y Miércoles 16 de abril el salón y barbería funcionará en horario normal (8:00am - 6:30pm).<br>
-        Jueves, Viernes y Sábado estará <strong>CERRADO</strong>.<br>
-        Volvemos el lunes con horarios normales. ¡Gracias!</p>
-        <button onclick="document.getElementById('aviso').style.display='none'">Cerrar</button>
-    </div>
-
-    <img src="logo.jpg" alt="Logo Barbería" class="logo">
-    <h1 style="color: #007bff;">Salón de Belleza y Barbería Fusión</h1>
-    <h2>Reserva tu cita</h2>
+    <header>
+        <img src="logo.png" alt="Logo Barbería Fusión">
+        <h1>Salón de Belleza y Barbería Fusión</h1>
+    </header>
     
-    <div class="container">
-        <img src="2..jpg" alt="Imagen de Barbería" class="service-image">
-        
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" placeholder="Tu nombre">
-        
-        <label for="servicio">Servicio:</label>
-        <select id="servicio">
-            <option value="Corte clásico">Corte clásico</option>
-            <option value="Corte moderno (sombreados)">Corte moderno (sombreados)</option>
-            <option value="Corte y barba">Corte y barba</option>
-            <option value="Estilismo">Estilismo</option>
-            <option value="Pestañas">Pestañas</option>
-            <option value="Manicura">Manicura</option>
-            <option value="Pedicura">Pedicura</option>
-        </select>
-        
-        <label for="barbero">Elige tu barbero:</label>
-        <select id="barbero">
-            <option value="Pablo Barbershop">Pablo Barbershop</option>
-            <option value="Axel Barbershop">Axel Barbershop</option>
-            <option value="Joel Barbershop">Joel Barbershop</option>
-            <option value="Yendry">Yendry</option>
-        </select>
-        
-        <label for="fecha">Fecha:</label>
-        <input type="date" id="fecha" onchange="cargarHorasDisponibles()">
-        
-        <label for="hora">Hora:</label>
-        <input type="time" id="hora">
-        
-        <p><strong>Por favor, llega 10 minutos antes de tu cita.</strong></p>
-        
-        <button onclick="reservarCita()">Confirmar Cita</button>
-    </div>
+    <section>
+        <p><strong>Por favor, llegue 10 minutos antes de su cita.</strong></p>
+        <form id="appointmentForm">
+            <label for="name">Nombre:</label>
+            <input type="text" id="name" required>
+            
+            <label for="service">Servicio:</label>
+            <select id="service">
+                <option value="Corte clásico">Corte clásico</option>
+                <option value="Corte Moderno (sombreados)">Corte Moderno (sombreados)</option>
+                <option value="Corte y barba">Corte y barba</option>
+                <option value="Estilismo">Estilismo</option>
+                <option value="Pestañas">Pestañas</option>
+                <option value="Manicura">Manicura</option>
+                <option value="Pedicura">Pedicura</option>
+            </select>
+            
+            <label for="barber">Elige tu barbero o estilista:</label>
+            <select id="barber">
+                <option value="Pablo Barbershop">Pablo Barbershop</option>
+                <option value="Axel Barbershop">Axel Barbershop</option>
+                <option value="Joel Barbershop">Joel Barbershop</option>
+                <option value="Yendry Mora">Yendry Mora</option>
+            </select>
+            
+            <label for="date">Fecha:</label>
+            <input type="date" id="date" required>
+            
+            <label for="time">Hora:</label>
+            <input type="time" id="time" required>
+            
+            <button type="button" onclick="sendWhatsApp()">Confirmar Cita</button>
+        </form>
+    </section>
+
+    <section id="adminSection" style="display: none;">
+        <h2>Administración</h2>
+        <button onclick="generateExcel()">Generar Reporte de Citas</button>
+    </section>
 
     <script>
-        // Mostrar el aviso al cargar la página
-        window.onload = function() {
-            document.getElementById('aviso').style.display = 'block';
-        };
-
-        function cargarHorasDisponibles() {
-            let fecha = document.getElementById("fecha").value;
-            let barbero = document.getElementById("barbero").value;
-            let horaInput = document.getElementById("hora");
-            let citas = JSON.parse(localStorage.getItem("citas")) || {};
-            if (!citas[barbero]) citas[barbero] = [];
-            horaInput.disabled = false;
-            horaInput.value = "";
+        function formatTimeTo12Hour(time) {
+            let [hour, minutes] = time.split(":");
+            let period = "AM";
+            hour = parseInt(hour);
+            if (hour >= 12) {
+                period = "PM";
+                if (hour > 12) hour -= 12;
+            }
+            if (hour == 0) hour = 12;
+            return `${hour}:${minutes} ${period}`;
         }
 
-        function reservarCita() {
-            let nombre = document.getElementById("nombre").value;
-            let servicio = document.getElementById("servicio").value;
-            let barbero = document.getElementById("barbero").value;
-            let fecha = document.getElementById("fecha").value;
-            let hora = document.getElementById("hora").value;
-            let telefonoWhatsApp = "+50684021824"; // Reemplazar con el número de WhatsApp de la barbería
-
-            let citas = JSON.parse(localStorage.getItem("citas")) || {};
-            if (!citas[barbero]) citas[barbero] = [];
-            let citaExistente = citas[barbero].find(c => c.fecha === fecha && c.hora === hora);
-
-            if (citaExistente) {
-                alert("Esa hora ya está reservada con este barbero. Por favor, elige otra.");
+        function sendWhatsApp() {
+            let name = document.getElementById("name").value;
+            let service = document.getElementById("service").value;
+            let barber = document.getElementById("barber").value;
+            let date = document.getElementById("date").value;
+            let time = document.getElementById("time").value;
+            
+            if (!name || !date || !time) {
+                alert("Por favor, completa todos los campos.");
                 return;
             }
+            
+            let formattedTime = formatTimeTo12Hour(time);
+            let message = `Hola, quiero agendar una cita:\n\n👤 Nombre: ${name}\n✂️ Servicio: ${service}\n💈 Barbero/Estilista: ${barber}\n📅 Fecha: ${date}\n🕒 Hora: ${formattedTime}\n\nPor favor, llegar 10 minutos antes.`;
+            
+            let whatsappUrl = `https://api.whatsapp.com/send?phone=50684021824&text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, "_blank");
+        }
 
-            if (nombre && servicio && barbero && fecha && hora) {
-                citas[barbero].push({ fecha, hora });
-                localStorage.setItem("citas", JSON.stringify(citas));
-                let mensaje = `Hola, soy ${nombre}. Me gustaría agendar una cita para ${servicio} con ${barbero} el ${fecha} a las ${hora}. Por favor, llegaré 10 minutos antes.`;
-                let url = `https://wa.me/${telefonoWhatsApp}?text=${encodeURIComponent(mensaje)}`;
-                window.open(url, "_blank");
-                alert("Cita reservada con éxito. Si deseas cancelar, contacta a la barbería.");
+        function generateExcel() {
+            let data = [
+                ["Nombre", "Servicio", "Barbero/Estilista", "Fecha", "Hora"]
+            ];
+            
+            let row = [
+                document.getElementById("name").value,
+                document.getElementById("service").value,
+                document.getElementById("barber").value,
+                document.getElementById("date").value,
+                document.getElementById("time").value
+            ];
+            data.push(row);
+            
+            let ws = XLSX.utils.aoa_to_sheet(data);
+            let wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Citas");
+            XLSX.writeFile(wb, "citas.xlsx");
+        }
+
+        function adminLogin() {
+            let password = prompt("Ingrese la clave de administrador:");
+            if (password === "Pmyv1234") { // Cambia "clave123" por tu clave personalizada
+                document.getElementById("adminSection").style.display = "block";
             } else {
-                alert("Por favor, completa todos los campos");
+                alert("Clave incorrecta");
             }
         }
+
+        console.log("Escribe 'adminLogin()' en la consola para acceder al panel de administración.");
     </script>
 </body>
 </html>
+
 
 
