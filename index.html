@@ -221,7 +221,16 @@
       if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "a") {
         let password = prompt("Ingrese la clave de administrador:");
         if (password === "Pmyv1234") {
-          document.get
+          document.getElementById("adminSection").style.display = "block";
+        } else {
+          alert("Clave incorrecta");
+        }
+      }
+    });
+  </script>
+</body>
+</html>
+
 
  
 
