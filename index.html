@@ -24,7 +24,7 @@
         }
         section {
             background: #fff;
-            max-width: 400px;
+            max-width: 500px;
             margin: 20px auto;
             padding: 20px;
             border-radius: 10px;
@@ -47,9 +47,6 @@
         button:hover {
             background-color: #218838;
         }
-        #adminSection {
-            display: none;
-        }
         #holidayNotice {
             background: #ffcc00;
             padding: 15px;
@@ -68,6 +65,24 @@
             padding: 5px 10px;
             border-radius: 50%;
             cursor: pointer;
+        }
+        .time-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .time-container select {
+            width: 70px;
+            margin: 0 5px;
+        }
+        .time-container select:first-child {
+            margin-left: 0;
+        }
+        .time-container select:last-child {
+            margin-right: 0;
+        }
+        #adminSection {
+            display: none;
         }
         #citasTable {
             width: 100%;
@@ -121,8 +136,35 @@
             <input type="date" id="date" required>
             
             <label for="time">Hora:</label>
-            <input type="time" id="time" required>
-            
+            <div class="time-container">
+                <select id="hour" required>
+                    <option value="01">01</option>
+                    <option value="02">02</option>
+                    <option value="03">03</option>
+                    <option value="04">04</option>
+                    <option value="05">05</option>
+                    <option value="06">06</option>
+                    <option value="07">07</option>
+                    <option value="08">08</option>
+                    <option value="09">09</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
+                
+                <select id="minute" required>
+                    <option value="00">00</option>
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="45">45</option>
+                </select>
+
+                <select id="ampm" required>
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                </select>
+            </div>
+
             <button type="button" onclick="sendWhatsApp()">Confirmar Cita</button>
         </form>
     </section>
@@ -159,14 +201,29 @@
             let service = document.getElementById("service").value;
             let barber = document.getElementById("barber").value;
             let date = document.getElementById("date").value;
-            let time = document.getElementById("time").value;
+            let hour = document.getElementById("hour").value;
+            let minute = document.getElementById("minute").value;
+            let ampm = document.getElementById("ampm").value;
             
-            if (!name || !date || !time) {
+            if (!name || !date || !hour || !minute || !ampm) {
                 alert("Por favor, completa todos los campos.");
                 return;
             }
-            
-            let message = `Hola, quiero agendar una cita:\n\n👤 Nombre: ${name}\n✂️ Servicio: ${service}\n💈 Barbero/Estilista: ${barber}\n📅 Fecha: ${date}\n🕒 Hora: ${time}\n\nLegaré 10 minutos antes de la cita.`;
+
+            // Validación de horario según los días
+            let currentDate = new Date(date);
+            let currentDay = currentDate.getDay();
+            let timeInMinutes = parseInt(hour) * 60 + parseInt(minute);
+            if (ampm === "PM" && hour !== "12") timeInMinutes += 12 * 60;
+
+            if ((currentDay >= 1 && currentDay <= 4 && (timeInMinutes < 480 || timeInMinutes > 1020)) || // Lunes a Jueves
+                (currentDay === 5 && (timeInMinutes < 480 || timeInMinutes > 1200)) || // Viernes
+                (currentDay === 6 && (timeInMinutes < 480 || timeInMinutes > 1200))) { // Sábado
+                alert("El horario seleccionado no es válido según el horario del salón.");
+                return;
+            }
+
+            let message = `Hola, quiero agendar una cita:\n\n👤 Nombre: ${name}\n✂️ Servicio: ${service}\n💈 Barbero/Estilista: ${barber}\n📅 Fecha: ${date}\n🕒 Hora: ${hour}:${minute} ${ampm}\n\nLegaré 10 minutos antes de la cita.`;
             
             let whatsappUrl = `https://api.whatsapp.com/send?phone=50684021824&text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, "_blank");
@@ -234,7 +291,6 @@
     </script>
 </body>
 </html>
-
 
 
 
