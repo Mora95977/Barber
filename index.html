@@ -1,286 +1,240 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Salón de Belleza y Barbería Fusión</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background-color: #222;
-      color: #fff;
-      padding: 20px;
-    }
-    header img {
-      width: 150px;
-    }
-    section {
-      background: #fff;
-      max-width: 400px;
-      margin: 20px auto;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    input, select, button {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      background-color: #28a745;
-      color: white;
-      font-size: 16px;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #218838;
-    }
-    #holidayNotice {
-      background: #ffcc00;
-      padding: 15px;
-      margin: 20px;
-      border-radius: 5px;
-      position: relative;
-    }
-    #closeNotice {
-      position: absolute;
-      top: -10px;
-      right: -10px;
-      background: red;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 50%;
-      cursor: pointer;
-    }
-    #adminSection {
-      display: none;
-      max-width: 800px;
-      margin: 40px auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    .time-picker {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .time-picker input,
-    .time-picker select {
-      margin: 0 5px;
-      padding: 10px;
-      font-size: 16px;
-      width: auto;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    table, th, td {
-      border: 1px solid #ddd;
-    }
-    th, td {
-      padding: 10px;
-      text-align: center;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salón de Belleza y Barbería Fusión</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        /* Estilos básicos */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #222;
+            color: #fff;
+            padding: 20px;
+        }
+        header img {
+            width: 150px;
+        }
+        section {
+            background: #fff;
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #adminSection {
+            display: none;
+        }
+        #holidayNotice {
+            background: #ffcc00;
+            padding: 15px;
+            margin: 20px;
+            border-radius: 5px;
+            display: block;
+            position: relative;
+        }
+        #closeNotice {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        #citasTable {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        #citasTable th, #citasTable td {
+            padding: 8px;
+            border: 1px solid #ccc;
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <img src="https://github.com/Mora95977/Barber/blob/main/logo.jpg?raw=true" alt="Logo Barbería Fusión" />
-    <h1>Salón de Belleza y Barbería Fusión</h1>
-  </header>
-
-  <div id="holidayNotice">
-    <button id="closeNotice" onclick="closeNotice()">X</button>
-    <p><strong>Horario del Salón:</strong><br>
-      Lunes a Jueves: 8am - 6:30pm<br>
-      Viernes y Sábado: 8am - 8pm<br>
-      Domingo: <strong>CERRADO</strong></p>
-  </div>
-
-  <section>
-    <p><strong>Llegaré 10 minutos antes de la cita.</strong></p>
-    <form id="appointmentForm">
-      <label for="name">Nombre:</label>
-      <input type="text" id="name" required />
-
-      <label for="service">Servicio:</label>
-      <select id="service">
-        <option value="Corte clásico">Corte clásico</option>
-        <option value="Corte Moderno (sombreados)">Corte Moderno (sombreados)</option>
-        <option value="Corte y barba">Corte y barba</option>
-        <option value="Estilismo">Estilismo</option>
-        <option value="Pestañas">Pestañas</option>
-        <option value="Manicura">Manicura</option>
-        <option value="Pedicura">Pedicura</option>
-      </select>
-
-      <label for="barber">Elige tu barbero o estilista:</label>
-      <select id="barber">
-        <option value="Pablo Barbershop">Pablo Barbershop</option>
-        <option value="Axel Barbershop">Axel Barbershop</option>
-        <option value="Joel Barbershop">Joel Barbershop</option>
-        <option value="Yendry Mora (Estilista)">Yendry Mora (Estilista)</option>
-      </select>
-
-      <label for="date">Fecha:</label>
-      <input type="date" id="date" required />
-
-      <label for="time">Hora:</label>
-      <div class="time-picker">
-        <input type="number" id="hour" min="1" max="12" placeholder="Hora (1-12)" required />
-        <select id="minute" required>
-          <option value="00">00</option>
-          <option value="15">15</option>
-          <option value="30">30</option>
-          <option value="45">45</option>
-        </select>
-        <select id="ampm" required>
-          <option value="AM">AM</option>
-          <option value="PM">PM</option>
-        </select>
-      </div>
-
-      <button type="button" onclick="sendWhatsApp()">Confirmar Cita</button>
-    </form>
-  </section>
-
-  <section id="adminSection">
-    <h2>Administración</h2>
-    <button onclick="generateExcel()">Generar Reporte de Citas</button>
-    <div>
-      <h3>Listado de Citas</h3>
-      <table id="citasTable">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Servicio</th>
-            <th>Barbero</th>
-            <th>Fecha</th>
-            <th>Hora</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <button onclick="borrarCitas()" style="margin-top: 10px; background-color: red;">Borrar todas las citas</button>
+    <header>
+        <img src="https://github.com/Mora95977/Barber/blob/main/logo.jpg?raw=true" alt="Logo Barbería Fusión">
+        <h1>Salón de Belleza y Barbería Fusión</h1>
+    </header>
+    
+    <div id="holidayNotice">
+        <button id="closeNotice" onclick="closeNotice()">X</button>
+        <p><strong>Horario del Salón de belleza y Barbería:</strong><br>
+        Lunes a Jueves de 8am a 6:30pm, Viernes y Sábados de 8am a 8pm. <br>
+        El día Domingo estará <strong>CERRADO</strong>.</p>
     </div>
-  </section>
 
-  <script>
-    function closeNotice() {
-      document.getElementById("holidayNotice").style.display = "none";
-    }
+    <section>
+        <p><strong>Llegaré 10 minutos antes de la cita.</strong></p>
+        <form id="appointmentForm">
+            <label for="name">Nombre:</label>
+            <input type="text" id="name" required>
+            
+            <label for="service">Servicio:</label>
+            <select id="service">
+                <option value="Corte clásico">Corte clásico</option>
+                <option value="Corte Moderno (sombreados)">Corte Moderno (sombreados)</option>
+                <option value="Corte y barba">Corte y barba</option>
+                <option value="Estilismo">Estilismo</option>
+                <option value="Pestañas">Pestañas</option>
+                <option value="Manicura">Manicura</option>
+                <option value="Pedicura">Pedicura</option>
+            </select>
+            
+            <label for="barber">Elige tu barbero o estilista:</label>
+            <select id="barber">
+                <option value="Pablo Barbershop">Pablo Barbershop</option>
+                <option value="Axel Barbershop">Axel Barbershop</option>
+                <option value="Joel Barbershop">Joel Barbershop</option>
+                <option value="Yendry Mora (Estilista)">Yendry Mora (Estilista)</option>
+            </select>
+            
+            <label for="date">Fecha:</label>
+            <input type="date" id="date" required>
+            
+            <label for="time">Hora:</label>
+            <input type="time" id="time" required>
+            
+            <button type="button" onclick="sendWhatsApp()">Confirmar Cita</button>
+        </form>
+    </section>
 
-    function isSunday(dateString) {
-      return new Date(dateString).getDay() === 0;
-    }
+    <section id="adminSection">
+        <h2>Administración</h2>
+        <button onclick="generateExcel()">Generar Reporte de Citas</button>
+        <button onclick="borrarCitas()">Borrar Citas</button>
+        <table id="citasTable">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Servicio</th>
+                    <th>Barbero</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se mostrarán las citas -->
+            </tbody>
+        </table>
+    </section>
 
-    function isValidHour(dateString, hour, minute, ampm) {
-      const date = new Date(dateString);
-      const day = date.getDay();
-      hour = parseInt(hour);
-      minute = parseInt(minute);
-      if (ampm === "PM" && hour !== 12) hour += 12;
-      if (ampm === "AM" && hour === 12) hour = 0;
-      const totalMinutes = hour * 60 + minute;
+    <script>
+        // Función para cerrar el aviso de horarios
+        function closeNotice() {
+            document.getElementById("holidayNotice").style.display = "none";
+        }
 
-      if (day >= 1 && day <= 4) return totalMinutes >= 480 && totalMinutes <= 1110; // 8am - 6:30pm
-      if (day === 5 || day === 6) return totalMinutes >= 480 && totalMinutes <= 1200; // 8am - 8:00pm
-      return false;
-    }
+        // Función para enviar la cita por WhatsApp
+        function sendWhatsApp() {
+            let name = document.getElementById("name").value;
+            let service = document.getElementById("service").value;
+            let barber = document.getElementById("barber").value;
+            let date = document.getElementById("date").value;
+            let time = document.getElementById("time").value;
+            
+            if (!name || !date || !time) {
+                alert("Por favor, completa todos los campos.");
+                return;
+            }
+            
+            let message = `Hola, quiero agendar una cita:\n\n👤 Nombre: ${name}\n✂️ Servicio: ${service}\n💈 Barbero/Estilista: ${barber}\n📅 Fecha: ${date}\n🕒 Hora: ${time}\n\nLegaré 10 minutos antes de la cita.`;
+            
+            let whatsappUrl = `https://api.whatsapp.com/send?phone=50684021824&text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, "_blank");
+        }
 
-    function sendWhatsApp() {
-      const name = document.getElementById("name").value.trim();
-      const service = document.getElementById("service").value;
-      const barber = document.getElementById("barber").value;
-      const date = document.getElementById("date").value;
-      const hour = document.getElementById("hour").value;
-      const minute = document.getElementById("minute").value;
-      const ampm = document.getElementById("ampm").value;
+        // Función para acceder a la administración con la contraseña
+        function requestAdminAccess() {
+            let password = prompt("Ingrese la clave de administrador:");
+            if (password === "Pmyv1234") { // Contraseña correcta
+                document.getElementById("adminSection").style.display = "block"; // Muestra la sección de administración
+                mostrarCitasEnTabla(); // Mostrar las citas
+            } else {
+                alert("Clave incorrecta");
+            }
+        }
 
-      if (!name || !date || !hour || !minute || !ampm) {
-        alert("Por favor, completa todos los campos.");
-        return;
-      }
+        // Función para mostrar las citas en la tabla
+        function mostrarCitasEnTabla() {
+            const tabla = document.querySelector("#citasTable tbody");
+            tabla.innerHTML = "";
+            const citas = JSON.parse(localStorage.getItem("citasFusion")) || [];
 
-      if (isSunday(date)) {
-        alert("El salón está cerrado los domingos.");
-        return;
-      }
+            citas.forEach(cita => {
+                const fila = document.createElement("tr");
+                fila.innerHTML = `
+                    <td>${cita.Nombre}</td>
+                    <td>${cita.Servicio}</td>
+                    <td>${cita.Barbero}</td>
+                    <td>${cita.Fecha}</td>
+                    <td>${cita.Hora}</td>
+                `;
+                tabla.appendChild(fila);
+            });
+        }
 
-      if (!isValidHour(date, hour, minute, ampm)) {
-        alert("La hora seleccionada no está disponible. Por favor, elige una hora dentro del horario del salón.");
-        return;
-      }
+        // Función para generar el reporte en Excel
+        function generateExcel() {
+            const citas = JSON.parse(localStorage.getItem("citasFusion")) || [];
+            if (citas.length === 0) {
+                alert("No hay citas agendadas.");
+                return;
+            }
 
-      const message = `Hola, quiero agendar una cita:\n\n👤 Nombre: ${name}\n✂️ Servicio: ${service}\n💈 Barbero/Estilista: ${barber}\n📅 Fecha: ${date}\n🕒 Hora: ${hour}:${minute} ${ampm}\n\nLegaré 10 minutos antes de la cita.`;
-      const whatsappUrl = `https://api.whatsapp.com/send?phone=50684021824&text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, "_blank");
+            const ws = XLSX.utils.json_to_sheet(citas);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Citas");
+            XLSX.writeFile(wb, "Reporte_Citas_Fusion.xlsx");
+        }
 
-      // Guardar cita en localStorage
-      const citas = JSON.parse(localStorage.getItem("citasFusion")) || [];
-      citas.push({ Nombre: name, Servicio: service, Barbero: barber, Fecha: date, Hora: `${hour}:${minute} ${ampm}` });
-      localStorage.setItem("citasFusion", JSON.stringify(citas));
-      alert("Cita confirmada.");
-      mostrarCitasEnTabla();
-    }
+        // Función para borrar las citas
+        function borrarCitas() {
+            if (confirm("¿Estás seguro de que deseas borrar todas las citas?")) {
+                localStorage.removeItem("citasFusion");
+                mostrarCitasEnTabla();
+                alert("Todas las citas han sido eliminadas.");
+            }
+        }
 
-    function mostrarCitasEnTabla() {
-      const tabla = document.querySelector("#citasTable tbody");
-      tabla.innerHTML = "";
-      const citas = JSON.parse(localStorage.getItem("citasFusion")) || [];
-
-      citas.forEach(cita => {
-        const fila = document.createElement("tr");
-        fila.innerHTML = `
-          <td>${cita.Nombre}</td>
-          <td>${cita.Servicio}</td>
-          <td>${cita.Barbero}</td>
-          <td>${cita.Fecha}</td>
-          <td>${cita.Hora}</td>
-        `;
-        tabla.appendChild(fila);
-      });
-    }
-
-    function borrarCitas() {
-      if (confirm("¿Estás seguro de que deseas borrar todas las citas?")) {
-        localStorage.removeItem("citasFusion");
-        mostrarCitasEnTabla();
-        alert("Todas las citas han sido eliminadas.");
-      }
-    }
-
-    function requestAdminAccess() {
-      let password = prompt("Ingrese la clave de administrador:");
-      if (password === "Pmyv1234") {
-        document.getElementById("adminSection").style.display = "block";
-        mostrarCitasEnTabla();
-      } else {
-        alert("Clave incorrecta");
-      }
-    }
-  </script>
+        // Detectar la combinación de teclas Ctrl + Shift + A
+        window.addEventListener("keydown", function(event) {
+            if (event.ctrlKey && event.shiftKey && event.key === "A") {
+                requestAdminAccess(); // Solicitar acceso de administrador
+            }
+        });
+    </script>
 </body>
 </html>
+
 
 
 
