@@ -141,7 +141,7 @@
                 return;
             }
             
-            let message = `Hola, quiero agendar una cita:\n\n👤 Nombre: ${name}\n✂️ Servicio: ${service}\n💈 Barbero/Estilista: ${barber}\n📅 Fecha: ${date}\n🕒 Hora: ${time}\n\nPor favor, llegar 10 minutos antes.`;
+            let message = `Hola, quiero agendar una cita:\n\n👤 Nombre: ${name}\n✂️ Servicio: ${service}\n💈 Barbero/Estilista: ${barber}\n📅 Fecha: ${date}\n🕒 Hora: ${time}\n\nLegaré 10 minutos antes de la cita.`;
             
             let whatsappUrl = `https://api.whatsapp.com/send?phone=50684021824&text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, "_blank");
