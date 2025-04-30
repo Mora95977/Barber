@@ -158,122 +158,12 @@
       return day === 0;
     }
 
-    function isWithinSchedule(dateString, hour, minute, ampm) {
-      const date = new Date(dateString);
-      const day = date.getDay();
-
-      // Convert hour to 24-hour format
+    function convertTo24Hour(hour, minute, ampm) {
       if (ampm === "PM" && hour !== 12) hour += 12;
       if (ampm === "AM" && hour === 12) hour = 0;
-
-      const totalMinutes = hour * 60 + parseInt(minute);
-
-      // Horarios para lunes a jueves (8:00am - 6:30pm)
-      if (day >= 1 && day <= 4) {
-        return totalMinutes >= 480 && totalMinutes <= 1110; // 8:00 AM (480) - 6:30 PM (1110)
-      } 
-      // Horarios para viernes y sábado (8:00am - 8:00pm)
-      else if (day === 5 || day === 6) {
-        return totalMinutes >= 480 && totalMinutes <= 1200; // 8:00 AM (480) - 8:00 PM (1200)
-      }
-      return false;
-    }
-
-    // Lógica para habilitar el campo de hora dependiendo de la fecha seleccionada
-    document.getElementById("date").addEventListener("change", function () {
-      const hourInput = document.getElementById("hour");
-      const minuteSelect = document.getElementById("minute");
-      const ampmSelect = document.getElementById("ampm");
-      const selectedDate = this.value;
-
-      if (!selectedDate) {
-        hourInput.disabled = true;
-        minuteSelect.disabled = true;
-        ampmSelect.disabled = true;
-        return;
-      }
-
-      const date = new Date(selectedDate + "T00:00");
-      const day = date.getDay();
-
-      if (day === 0) { // Si es domingo
-        alert("El salón está cerrado los domingos.");
-        this.value = "";
-        hourInput.value = "";
-        minuteSelect.value = "00";
-        ampmSelect.value = "AM";
-        hourInput.disabled = true;
-        minuteSelect.disabled = true;
-        ampmSelect.disabled = true;
-        return;
-      }
-
-      // Habilitar el campo de hora y AM/PM
-      hourInput.disabled = false;
-      minuteSelect.disabled = false;
-      ampmSelect.disabled = false;
-    });
-
-    // Función para enviar un mensaje de WhatsApp con los detalles de la cita
-    function sendWhatsApp() {
-      let name = document.getElementById("name").value.trim();
-      let service = document.getElementById("service").value;
-      let barber = document.getElementById("barber").value;
-      let date = document.getElementById("date").value;
-      let hour = document.getElementById("hour").value;
-      let minute = document.getElementById("minute").value;
-      let ampm = document.getElementById("ampm").value;
-
-      if (!name || !date || !hour || !minute || !ampm) {
-        alert("Por favor, completa todos los campos.");
-        return;
-      }
-
-      if (isSunday(date)) {
-        alert("El salón está cerrado los domingos.");
-        return;
-      }
-
-      if (!isWithinSchedule(date, hour, minute, ampm)) {
-        alert("La hora seleccionada está fuera del horario permitido.");
-        return;
-      }
-
-      let message = `Hola, quiero agendar una cita:\n\n👤 Nombre: ${name}\n✂️ Servicio: ${service}\n💈 Barbero/Estilista: ${barber}\n📅 Fecha: ${date}\n🕒 Hora: ${hour}:${minute} ${ampm}\n\nLlegaré 10 minutos antes de la cita.`;
-
-      appointments.push({ Nombre: name, Servicio: service, Barbero: barber, Fecha: date, Hora: `${hour}:${minute} ${ampm}` });
-
-      let whatsappUrl = `https://api.whatsapp.com/send?phone=50684021824&text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, "_blank");
-    }
-
-    // Función para generar el reporte de citas en Excel
-    function generateExcel() {
-      if (appointments.length === 0) {
-        alert("No hay citas para exportar.");
-        return;
-      }
-      let ws = XLSX.utils.json_to_sheet(appointments);
-      let wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Citas");
-      XLSX.writeFile(wb, "citas_barberia.xlsx");
-    }
-
-    // Acceso secreto a la administración
-    document.addEventListener("keydown", function (event) {
-      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "a") {
-        let password = prompt("Ingrese la clave de administrador:");
-        if (password === "Pmyv1234") {
-          document.getElementById("adminSection").style.display = "block";
-        } else {
-          alert("Clave incorrecta");
-        }
-      }
-    });
-  </script>
-</body>
-</html>
-
+      return hour
+::contentReference[oaicite:8]{index=8}
+ 
 
 
 
