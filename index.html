@@ -66,6 +66,12 @@
     }
     #adminSection {
       display: none;
+      max-width: 800px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
     .time-picker {
       display: flex;
@@ -77,6 +83,22 @@
       margin: 0 5px;
       padding: 10px;
       font-size: 16px;
+      width: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #f2f2f2;
     }
   </style>
 </head>
@@ -137,18 +159,32 @@
         </select>
       </div>
 
-      <button type="button" id="confirmButton" onclick="sendWhatsApp()">Confirmar Cita</button>
+      <button type="button" onclick="sendWhatsApp()">Confirmar Cita</button>
     </form>
   </section>
 
   <section id="adminSection">
     <h2>Administración</h2>
     <button onclick="generateExcel()">Generar Reporte de Citas</button>
+    <div>
+      <h3>Listado de Citas</h3>
+      <table id="citasTable">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Servicio</th>
+            <th>Barbero</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <button onclick="borrarCitas()" style="margin-top: 10px; background-color: red;">Borrar todas las citas</button>
+    </div>
   </section>
 
   <script>
-    let appointments = [];
-
     function closeNotice() {
       document.getElementById("holidayNotice").style.display = "none";
     }
@@ -166,70 +202,86 @@
       if (ampm === "AM" && hour === 12) hour = 0;
       const totalMinutes = hour * 60 + minute;
 
-      if (day >= 1 && day <= 4) return totalMinutes >= 480 && totalMinutes <= 1110; // 8:00am - 6:30pm
-      if (day === 5 || day === 6) return totalMinutes >= 480 && totalMinutes <= 1200; // 8:00am - 8:00pm
+      if (day >= 1 && day <= 4) return totalMinutes >= 480 && totalMinutes <= 1110; // 8am - 6:30pm
+      if (day === 5 || day === 6) return totalMinutes >= 480 && totalMinutes <= 1200; // 8am - 8:00pm
       return false;
     }
 
     function sendWhatsApp() {
-      try {
-        const name = document.getElementById("name").value.trim();
-        const service = document.getElementById("service").value;
-        const barber = document.getElementById("barber").value;
-        const date = document.getElementById("date").value;
-        const hour = document.getElementById("hour").value;
-        const minute = document.getElementById("minute").value;
-        const ampm = document.getElementById("ampm").value;
+      const name = document.getElementById("name").value.trim();
+      const service = document.getElementById("service").value;
+      const barber = document.getElementById("barber").value;
+      const date = document.getElementById("date").value;
+      const hour = document.getElementById("hour").value;
+      const minute = document.getElementById("minute").value;
+      const ampm = document.getElementById("ampm").value;
 
-        if (!name || !date || !hour || !minute || !ampm) {
-          alert("Por favor, completa todos los campos.");
-          return;
-        }
-
-        if (isSunday(date)) {
-          alert("El salón está cerrado los domingos.");
-          return;
-        }
-
-        if (!isValidHour(date, hour, minute, ampm)) {
-          alert("La hora seleccionada está fuera del horario permitido.");
-          return;
-        }
-
-        const message = `Hola, quiero agendar una cita:\n\n👤 Nombre: ${name}\n✂️ Servicio: ${service}\n💈 Barbero/Estilista: ${barber}\n📅 Fecha: ${date}\n🕒 Hora: ${hour}:${minute} ${ampm}\n\nLlegaré 10 minutos antes de la cita.`;
-        appointments.push({ Nombre: name, Servicio: service, Barbero: barber, Fecha: date, Hora: `${hour}:${minute} ${ampm}` });
-
-        const whatsappUrl = `https://api.whatsapp.com/send?phone=50684021824&text=${encodeURIComponent(message)}`;
-        window.open(whatsappUrl, "_blank");
-      } catch (error) {
-        console.error("Error al enviar la cita:", error);
-      }
-    }
-
-    function generateExcel() {
-      if (appointments.length === 0) {
-        alert("No hay citas para exportar.");
+      if (!name || !date || !hour || !minute || !ampm) {
+        alert("Por favor, completa todos los campos.");
         return;
       }
-      let ws = XLSX.utils.json_to_sheet(appointments);
-      let wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Citas");
-      XLSX.writeFile(wb, "citas_barberia.xlsx");
+
+      if (isSunday(date)) {
+        alert("El salón está cerrado los domingos.");
+        return;
+      }
+
+      if (!isValidHour(date, hour, minute, ampm)) {
+        alert("La hora seleccionada no está disponible. Por favor, elige una hora dentro del horario del salón.");
+        return;
+      }
+
+      const message = `Hola, quiero agendar una cita:\n\n👤 Nombre: ${name}\n✂️ Servicio: ${service}\n💈 Barbero/Estilista: ${barber}\n📅 Fecha: ${date}\n🕒 Hora: ${hour}:${minute} ${ampm}\n\nLegaré 10 minutos antes de la cita.`;
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=50684021824&text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, "_blank");
+
+      // Guardar cita en localStorage
+      const citas = JSON.parse(localStorage.getItem("citasFusion")) || [];
+      citas.push({ Nombre: name, Servicio: service, Barbero: barber, Fecha: date, Hora: `${hour}:${minute} ${ampm}` });
+      localStorage.setItem("citasFusion", JSON.stringify(citas));
+      alert("Cita confirmada.");
+      mostrarCitasEnTabla();
     }
 
-    document.addEventListener("keydown", function (event) {
-      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "a") {
-        let password = prompt("Ingrese la clave de administrador:");
-        if (password === "Pmyv1234") {
-          document.getElementById("adminSection").style.display = "block";
-        } else {
-          alert("Clave incorrecta");
-        }
+    function mostrarCitasEnTabla() {
+      const tabla = document.querySelector("#citasTable tbody");
+      tabla.innerHTML = "";
+      const citas = JSON.parse(localStorage.getItem("citasFusion")) || [];
+
+      citas.forEach(cita => {
+        const fila = document.createElement("tr");
+        fila.innerHTML = `
+          <td>${cita.Nombre}</td>
+          <td>${cita.Servicio}</td>
+          <td>${cita.Barbero}</td>
+          <td>${cita.Fecha}</td>
+          <td>${cita.Hora}</td>
+        `;
+        tabla.appendChild(fila);
+      });
+    }
+
+    function borrarCitas() {
+      if (confirm("¿Estás seguro de que deseas borrar todas las citas?")) {
+        localStorage.removeItem("citasFusion");
+        mostrarCitasEnTabla();
+        alert("Todas las citas han sido eliminadas.");
       }
-    });
+    }
+
+    function requestAdminAccess() {
+      let password = prompt("Ingrese la clave de administrador:");
+      if (password === "Pmyv1234") {
+        document.getElementById("adminSection").style.display = "block";
+        mostrarCitasEnTabla();
+      } else {
+        alert("Clave incorrecta");
+      }
+    }
   </script>
 </body>
 </html>
+
 
 
  
