@@ -1,161 +1,276 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salón de Belleza y Barbería Fusión</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background-color: #222;
-            color: #fff;
-            padding: 20px;
-        }
-        header img {
-            width: 150px;
-        }
-        section {
-            background: #fff;
-            max-width: 400px;
-            margin: 20px auto;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        input, select, button {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #28a745;
-            color: white;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #218838;
-        }
-        #holidayNotice {
-            background: #ffcc00;
-            padding: 15px;
-            margin: 20px;
-            border-radius: 5px;
-            display: block;
-            position: relative;
-        }
-        #closeNotice {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background: red;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-        #adminSection {
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Salón de Belleza y Barbería Fusión</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #222;
+      color: #fff;
+      padding: 20px;
+    }
+    header img {
+      width: 150px;
+    }
+    section {
+      background: #fff;
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    #holidayNotice {
+      background: #ffcc00;
+      padding: 15px;
+      margin: 20px;
+      border-radius: 5px;
+      position: relative;
+    }
+    #closeNotice {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: red;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    #adminSection {
+      display: none;
+    }
+    .time-picker {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .time-picker input,
+    .time-picker select {
+      margin: 0 5px;
+      padding: 10px;
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <img src="https://github.com/Mora95977/Barber/blob/main/logo.jpg?raw=true" alt="Logo Barbería Fusión">
-        <h1>Salón de Belleza y Barbería Fusión</h1>
-    </header>
-    
-    <div id="holidayNotice">
-        <button id="closeNotice" onclick="closeNotice()">X</button>
-        <p><strong>Horario del Salón de belleza y Barbería:</strong><br>
-        Lunes a Jueves de 8am a 6:30pm, Viérnes y Sábados de 8am a 8pm. <br>
-        El dia Domingo estará <strong>CERRADO</strong>.</p>
-    </div>
+  <header>
+    <img src="https://github.com/Mora95977/Barber/blob/main/logo.jpg?raw=true" alt="Logo Barbería Fusión" />
+    <h1>Salón de Belleza y Barbería Fusión</h1>
+  </header>
 
-    <section>
-        <p><strong>Llegaré 10 minutos antes de la cita.</strong></p>
-        <form id="appointmentForm">
-            <label for="name">Nombre:</label>
-            <input type="text" id="name" required>
-            
-            <label for="service">Servicio:</label>
-            <select id="service">
-                <option value="Corte clásico">Corte clásico</option>
-                <option value="Corte Moderno (sombreados)">Corte Moderno (sombreados)</option>
-                <option value="Corte y barba">Corte y barba</option>
-                <option value="Estilismo">Estilismo</option>
-                <option value="Pestañas">Pestañas</option>
-                <option value="Manicura">Manicura</option>
-                <option value="Pedicura">Pedicura</option>
-            </select>
-            
-            <label for="barber">Elige tu barbero o estilista:</label>
-            <select id="barber">
-                <option value="Pablo Barbershop">Pablo Barbershop</option>
-                <option value="Axel Barbershop">Axel Barbershop</option>
-                <option value="Joel Barbershop">Joel Barbershop</option>
-                <option value="Yendry Mora (Estilista)">Yendry Mora (Estilista)</option>
-            </select>
-            
-            <label for="date">Fecha:</label>
-            <input type="date" id="date" required>
-            
-            <label for="time">Hora:</label>
-            <input type="time" id="time" required>
-            
-            <button type="button" onclick="sendWhatsApp()">Confirmar Cita</button>
-        </form>
-    </section>
+  <div id="holidayNotice">
+    <button id="closeNotice" onclick="closeNotice()">X</button>
+    <p><strong>Horario del Salón:</strong><br>
+      Lunes a Jueves: 8am - 6:30pm<br>
+      Viernes y Sábado: 8am - 8pm<br>
+      Domingo: <strong>CERRADO</strong></p>
+  </div>
 
-    <section id="adminSection">
-        <h2>Administración</h2>
-        <button onclick="generateExcel()">Generar Reporte de Citas</button>
-    </section>
+  <section>
+    <p><strong>Llegaré 10 minutos antes de la cita.</strong></p>
+    <form id="appointmentForm">
+      <label for="name">Nombre:</label>
+      <input type="text" id="name" required />
 
-    <script>
-        function closeNotice() {
-            document.getElementById("holidayNotice").style.display = "none";
+      <label for="service">Servicio:</label>
+      <select id="service">
+        <option value="Corte clásico">Corte clásico</option>
+        <option value="Corte Moderno (sombreados)">Corte Moderno (sombreados)</option>
+        <option value="Corte y barba">Corte y barba</option>
+        <option value="Estilismo">Estilismo</option>
+        <option value="Pestañas">Pestañas</option>
+        <option value="Manicura">Manicura</option>
+        <option value="Pedicura">Pedicura</option>
+      </select>
+
+      <label for="barber">Elige tu barbero o estilista:</label>
+      <select id="barber">
+        <option value="Pablo Barbershop">Pablo Barbershop</option>
+        <option value="Axel Barbershop">Axel Barbershop</option>
+        <option value="Joel Barbershop">Joel Barbershop</option>
+        <option value="Yendry Mora (Estilista)">Yendry Mora (Estilista)</option>
+      </select>
+
+      <label for="date">Fecha:</label>
+      <input type="date" id="date" required />
+
+      <label for="time">Hora:</label>
+      <div class="time-picker">
+        <input type="number" id="hour" min="1" max="12" placeholder="Hora (1-12)" required />
+        <select id="minute" required>
+          <option value="00">00</option>
+          <option value="15">15</option>
+          <option value="30">30</option>
+          <option value="45">45</option>
+        </select>
+        <select id="ampm" required>
+          <option value="AM">AM</option>
+          <option value="PM">PM</option>
+        </select>
+      </div>
+
+      <button type="button" onclick="sendWhatsApp()">Confirmar Cita</button>
+    </form>
+  </section>
+
+  <section id="adminSection">
+    <h2>Administración</h2>
+    <button onclick="generateExcel()">Generar Reporte de Citas</button>
+  </section>
+
+  <script>
+    let appointments = [];
+
+    function closeNotice() {
+      document.getElementById("holidayNotice").style.display = "none";
+    }
+
+    function isSunday(dateString) {
+      const day = new Date(dateString).getDay();
+      return day === 0;
+    }
+
+    function isWithinSchedule(dateString, hour, minute, ampm) {
+      const date = new Date(dateString);
+      const day = date.getDay();
+
+      // Convert hour to 24-hour format
+      if (ampm === "PM" && hour !== 12) hour += 12;
+      if (ampm === "AM" && hour === 12) hour = 0;
+
+      const totalMinutes = hour * 60 + parseInt(minute);
+
+      // Horarios para lunes a jueves (8:00am - 6:30pm)
+      if (day >= 1 && day <= 4) {
+        return totalMinutes >= 480 && totalMinutes <= 1110; // 8:00 AM (480) - 6:30 PM (1110)
+      } 
+      // Horarios para viernes y sábado (8:00am - 8:00pm)
+      else if (day === 5 || day === 6) {
+        return totalMinutes >= 480 && totalMinutes <= 1200; // 8:00 AM (480) - 8:00 PM (1200)
+      }
+      return false;
+    }
+
+    // Lógica para habilitar el campo de hora dependiendo de la fecha seleccionada
+    document.getElementById("date").addEventListener("change", function () {
+      const hourInput = document.getElementById("hour");
+      const minuteSelect = document.getElementById("minute");
+      const ampmSelect = document.getElementById("ampm");
+      const selectedDate = this.value;
+
+      if (!selectedDate) {
+        hourInput.disabled = true;
+        minuteSelect.disabled = true;
+        ampmSelect.disabled = true;
+        return;
+      }
+
+      const date = new Date(selectedDate + "T00:00");
+      const day = date.getDay();
+
+      if (day === 0) { // Si es domingo
+        alert("El salón está cerrado los domingos.");
+        this.value = "";
+        hourInput.value = "";
+        minuteSelect.value = "00";
+        ampmSelect.value = "AM";
+        hourInput.disabled = true;
+        minuteSelect.disabled = true;
+        ampmSelect.disabled = true;
+        return;
+      }
+
+      // Habilitar el campo de hora y AM/PM
+      hourInput.disabled = false;
+      minuteSelect.disabled = false;
+      ampmSelect.disabled = false;
+    });
+
+    // Función para enviar un mensaje de WhatsApp con los detalles de la cita
+    function sendWhatsApp() {
+      let name = document.getElementById("name").value.trim();
+      let service = document.getElementById("service").value;
+      let barber = document.getElementById("barber").value;
+      let date = document.getElementById("date").value;
+      let hour = document.getElementById("hour").value;
+      let minute = document.getElementById("minute").value;
+      let ampm = document.getElementById("ampm").value;
+
+      if (!name || !date || !hour || !minute || !ampm) {
+        alert("Por favor, completa todos los campos.");
+        return;
+      }
+
+      if (isSunday(date)) {
+        alert("El salón está cerrado los domingos.");
+        return;
+      }
+
+      if (!isWithinSchedule(date, hour, minute, ampm)) {
+        alert("La hora seleccionada está fuera del horario permitido.");
+        return;
+      }
+
+      let message = `Hola, quiero agendar una cita:\n\n👤 Nombre: ${name}\n✂️ Servicio: ${service}\n💈 Barbero/Estilista: ${barber}\n📅 Fecha: ${date}\n🕒 Hora: ${hour}:${minute} ${ampm}\n\nLlegaré 10 minutos antes de la cita.`;
+
+      appointments.push({ Nombre: name, Servicio: service, Barbero: barber, Fecha: date, Hora: `${hour}:${minute} ${ampm}` });
+
+      let whatsappUrl = `https://api.whatsapp.com/send?phone=50684021824&text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, "_blank");
+    }
+
+    // Función para generar el reporte de citas en Excel
+    function generateExcel() {
+      if (appointments.length === 0) {
+        alert("No hay citas para exportar.");
+        return;
+      }
+      let ws = XLSX.utils.json_to_sheet(appointments);
+      let wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Citas");
+      XLSX.writeFile(wb, "citas_barberia.xlsx");
+    }
+
+    // Acceso secreto a la administración
+    document.addEventListener("keydown", function (event) {
+      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "a") {
+        let password = prompt("Ingrese la clave de administrador:");
+        if (password === "Pmyv1234") {
+          document.getElementById("adminSection").style.display = "block";
+        } else {
+          alert("Clave incorrecta");
         }
-
-        function sendWhatsApp() {
-            let name = document.getElementById("name").value;
-            let service = document.getElementById("service").value;
-            let barber = document.getElementById("barber").value;
-            let date = document.getElementById("date").value;
-            let time = document.getElementById("time").value;
-            
-            if (!name || !date || !time) {
-                alert("Por favor, completa todos los campos.");
-                return;
-            }
-            
-            let message = `Hola, quiero agendar una cita:\n\n👤 Nombre: ${name}\n✂️ Servicio: ${service}\n💈 Barbero/Estilista: ${barber}\n📅 Fecha: ${date}\n🕒 Hora: ${time}\n\nLegaré 10 minutos antes de la cita.`;
-            
-            let whatsappUrl = `https://api.whatsapp.com/send?phone=50684021824&text=${encodeURIComponent(message)}`;
-            window.open(whatsappUrl, "_blank");
-        }
-
-        function requestAdminAccess() {
-            let password = prompt("Ingrese la clave de administrador:");
-            if (password === "Pmyv1234") {
-                document.getElementById("adminSection").style.display = "block";
-            } else {
-                alert("Clave incorrecta");
-            }
-        }
-    </script>
+      }
+    });
+  </script>
 </body>
 </html>
 
