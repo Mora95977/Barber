@@ -137,7 +137,7 @@
         </select>
       </div>
 
-      <button type="button" onclick="sendWhatsApp()">Confirmar Cita</button>
+      <button type="button" id="confirmButton" onclick="sendWhatsApp()">Confirmar Cita</button>
     </form>
   </section>
 
@@ -154,15 +154,75 @@
     }
 
     function isSunday(dateString) {
-      const day = new Date(dateString).getDay();
-      return day === 0;
+      return new Date(dateString).getDay() === 0;
     }
 
-    function convertTo24Hour(hour, minute, ampm) {
+    function isValidHour(dateString, hour, minute, ampm) {
+      const date = new Date(dateString);
+      const day = date.getDay();
+      hour = parseInt(hour);
+      minute = parseInt(minute);
       if (ampm === "PM" && hour !== 12) hour += 12;
       if (ampm === "AM" && hour === 12) hour = 0;
-      return hour
-::contentReference[oaicite:8]{index=8}
+      const totalMinutes = hour * 60 + minute;
+
+      if (day >= 1 && day <= 4) return totalMinutes >= 480 && totalMinutes <= 1110; // 8:00am - 6:30pm
+      if (day === 5 || day === 6) return totalMinutes >= 480 && totalMinutes <= 1200; // 8:00am - 8:00pm
+      return false;
+    }
+
+    function sendWhatsApp() {
+      try {
+        const name = document.getElementById("name").value.trim();
+        const service = document.getElementById("service").value;
+        const barber = document.getElementById("barber").value;
+        const date = document.getElementById("date").value;
+        const hour = document.getElementById("hour").value;
+        const minute = document.getElementById("minute").value;
+        const ampm = document.getElementById("ampm").value;
+
+        if (!name || !date || !hour || !minute || !ampm) {
+          alert("Por favor, completa todos los campos.");
+          return;
+        }
+
+        if (isSunday(date)) {
+          alert("El salón está cerrado los domingos.");
+          return;
+        }
+
+        if (!isValidHour(date, hour, minute, ampm)) {
+          alert("La hora seleccionada está fuera del horario permitido.");
+          return;
+        }
+
+        const message = `Hola, quiero agendar una cita:\n\n👤 Nombre: ${name}\n✂️ Servicio: ${service}\n💈 Barbero/Estilista: ${barber}\n📅 Fecha: ${date}\n🕒 Hora: ${hour}:${minute} ${ampm}\n\nLlegaré 10 minutos antes de la cita.`;
+        appointments.push({ Nombre: name, Servicio: service, Barbero: barber, Fecha: date, Hora: `${hour}:${minute} ${ampm}` });
+
+        const whatsappUrl = `https://api.whatsapp.com/send?phone=50684021824&text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, "_blank");
+      } catch (error) {
+        console.error("Error al enviar la cita:", error);
+      }
+    }
+
+    function generateExcel() {
+      if (appointments.length === 0) {
+        alert("No hay citas para exportar.");
+        return;
+      }
+      let ws = XLSX.utils.json_to_sheet(appointments);
+      let wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Citas");
+      XLSX.writeFile(wb, "citas_barberia.xlsx");
+    }
+
+    document.addEventListener("keydown", function (event) {
+      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "a") {
+        let password = prompt("Ingrese la clave de administrador:");
+        if (password === "Pmyv1234") {
+          document.get
+
  
 
 
