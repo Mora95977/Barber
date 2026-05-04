@@ -1,435 +1,501 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salón de Belleza y Barbería Fusión</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        header {
-            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-            color: #fff;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        
-        header img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 4px solid #fff;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            margin-bottom: 15px;
-            object-fit: cover;
-        }
-        
-        header h1 {
-            font-size: 2em;
-            font-weight: 600;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        
-        #holidayNotice {
-            background: linear-gradient(135deg, #43a047 0%, #66bb6a 100%);
-            color: white;
-            padding: 20px;
-            margin: 0 auto 30px;
-            border-radius: 15px;
-            max-width: 600px;
-            box-shadow: 0 8px 25px rgba(27, 94, 32, 0.3);
-            position: relative;
-            animation: slideDown 0.5s ease;
-        }
-        
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        #closeNotice {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255, 255, 255, 0.3);
-            color: white;
-            border: none;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        
-        #closeNotice:hover {
-            background: rgba(255, 255, 255, 0.5);
-            transform: rotate(90deg);
-        }
-        
-        #holidayNotice p {
-            line-height: 1.6;
-            font-size: 1.05em;
-        }
-        
-        section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            max-width: 550px;
-            margin: 0 auto 30px;
-            padding: 35px;
-            border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-        }
-        
-        section > p:first-child {
-            background: linear-gradient(135deg, #a5d6a7 0%, #81c784 100%);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            color: #1b5e20;
-            font-weight: 600;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        label {
-            display: block;
-            margin-top: 15px;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #333;
-            font-size: 0.95em;
-        }
-        
-        input, select {
-            width: 100%;
-            padding: 12px 15px;
-            margin-bottom: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1em;
-            transition: all 0.3s ease;
-            background: white;
-        }
-        
-        input:focus, select:focus {
-            outline: none;
-            border-color: #43a047;
-            box-shadow: 0 0 0 3px rgba(67, 160, 71, 0.1);
-        }
-        
-        button {
-            width: 100%;
-            padding: 15px;
-            margin-top: 10px;
-            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
-            color: white;
-            font-size: 1.1em;
-            font-weight: 600;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.4);
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.6);
-            background: linear-gradient(135deg, #388e3c 0%, #4caf50 100%);
-        }
-        
-        button:active {
-            transform: translateY(0);
-        }
-        
-        .time-container {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .time-container select {
-            flex: 1;
-            margin: 0;
-        }
-        
-        #adminSection {
-            display: none;
-            max-width: 900px;
-        }
-        
-        #adminSection h2 {
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 1.8em;
-        }
-        
-        #adminSection button {
-            margin: 10px 5px;
-        }
-        
-        #citasTable {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        #citasTable th {
-            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
-            color: white;
-            padding: 15px;
-            font-weight: 600;
-            text-align: left;
-        }
-        
-        #citasTable td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        #citasTable tr:last-child td {
-            border-bottom: none;
-        }
-        
-        #citasTable tr:hover {
-            background-color: #f1f8f4;
-        }
-        
-        @media (max-width: 600px) {
-            header h1 {
-                font-size: 1.5em;
-            }
-            
-            section {
-                padding: 25px;
-            }
-            
-            #citasTable {
-                font-size: 0.9em;
-            }
-            
-            #citasTable th,
-            #citasTable td {
-                padding: 10px 8px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salón de Belleza y Barbería Fusión</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --m1: #1a3a10; --m2: #2a5218; --m3: #3b6e24; --m4: #4e8a32;
+      --ml: #c8e6b0; --mp: #eaf5de; --ms: #faf8f2;
+      --g1: #9a7200; --g2: #c09000; --gb: #fffbf0;
+      --bg-page: #f2ede0; --bg-card: #fdfaf4;
+      --beige1: #ede8d8; --beige2: #d9d0b8;
+    }
+
+    body {
+      background: var(--bg-page);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 120px;
+    }
+
+    /* ── HERO ── */
+    .hero { background: var(--m1); overflow: hidden; }
+    .hero-top { padding: 40px 24px 28px; text-align: center; }
+    .logo-ring {
+      width: 110px; height: 110px; border-radius: 50%;
+      background: #faf8f2; border: 3px solid var(--beige2);
+      margin: 0 auto 16px; display: flex; align-items: center;
+      justify-content: center; overflow: hidden;
+    }
+    .logo-ring img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .hero h1 { color: #f5f0e4; font-size: 24px; font-weight: 600; letter-spacing: .3px; line-height: 1.3; }
+    .hero-city { color: var(--beige2); font-size: 12px; margin-top: 6px; letter-spacing: 1.5px; text-transform: uppercase; }
+    .hero-divider { height: 4px; background: linear-gradient(90deg, transparent, var(--beige2), var(--g2), var(--beige2), transparent); }
+
+    /* ── HORARIO ── */
+    .schedule {
+      background: var(--m2); padding: 18px 22px;
+      max-width: 560px; margin: 22px auto 0;
+      border-radius: 14px; position: relative;
+      border: 1px solid rgba(210,195,160,.18);
+    }
+    .schedule-close {
+      position: absolute; top: 11px; right: 13px;
+      background: rgba(255,255,255,.12); border: none; color: var(--beige2);
+      width: 26px; height: 26px; border-radius: 50%; cursor: pointer;
+      font-size: 14px; line-height: 26px; text-align: center;
+    }
+    .sch-title { color: #f0ead8; font-size: 13px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
+    .sch-title svg { width: 15px; height: 15px; fill: var(--beige2); flex-shrink: 0; }
+    .sch-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .sch-row { background: rgba(255,255,255,.08); border-radius: 9px; padding: 9px 12px; }
+    .sch-day { font-size: 11px; color: var(--beige2); margin-bottom: 3px; }
+    .sch-time { font-size: 13px; color: #f5f0e4; font-weight: 600; }
+    .sch-closed { font-size: 13px; color: #ff8a80; font-weight: 600; }
+
+    /* ── ALERTA ── */
+    .alert {
+      max-width: 560px; margin: 14px auto 0;
+      background: #fdf6e0; border: 1px solid #d9c070;
+      border-radius: 12px; padding: 12px 16px;
+      display: flex; align-items: center; gap: 11px;
+    }
+    .alert-ico {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--g2); display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0;
+    }
+    .alert-ico svg { width: 14px; height: 14px; fill: #fff; }
+    .alert p { font-size: 13px; color: #7a5800; font-weight: 600; }
+
+    /* ── CARD FORMULARIO ── */
+    .form-card {
+      background: var(--bg-card); max-width: 560px;
+      margin: 18px auto 0; border-radius: 18px;
+      overflow: hidden; border: 1px solid var(--beige2);
+      box-shadow: 0 4px 20px rgba(26,58,16,.08);
+    }
+    .fc-header { background: var(--m1); padding: 18px 24px; display: flex; align-items: center; gap: 12px; }
+    .fc-hico {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(255,255,255,.12); display: flex;
+      align-items: center; justify-content: center;
+    }
+    .fc-hico svg { width: 18px; height: 18px; fill: #f0ead8; }
+    .fc-htitle { color: #f5f0e4; font-size: 16px; font-weight: 600; }
+    .fc-hsub { color: var(--beige2); font-size: 12px; margin-top: 2px; }
+    .fc-body { padding: 26px 24px 20px; }
+
+    /* ── CAMPOS ── */
+    .flabel {
+      font-size: 11px; font-weight: 600; color: var(--m3);
+      text-transform: uppercase; letter-spacing: .7px;
+      margin-bottom: 7px; display: block;
+    }
+    .finput {
+      width: 100%; padding: 11px 14px;
+      border: 1.5px solid var(--beige2); border-radius: 10px;
+      font-size: 14px; color: #2a2010; background: #fdfaf4;
+      transition: border-color .2s, background .2s;
+      appearance: none; -webkit-appearance: none;
+      font-family: inherit;
+    }
+    .finput:focus { outline: none; border-color: var(--m4); background: #fff; }
+    .fsel {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%234e8a32' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 13px center; padding-right: 34px;
+    }
+    .fgroup { margin-bottom: 20px; }
+    .frow2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+    .sep { border: none; border-top: 1px solid var(--beige1); margin: 6px 0 20px; }
+
+    /* ── SERVICIOS ── */
+    .svc-section-label {
+      font-size: 11px; color: #8a7a50; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .6px; margin-bottom: 8px;
+    }
+    .svc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px; }
+    .svc-chip {
+      border: 1.5px solid var(--beige2); border-radius: 10px;
+      padding: 11px 13px; cursor: pointer; font-size: 13px;
+      color: #2a2010; background: #fdfaf4; transition: all .15s;
+      display: flex; align-items: center; gap: 9px; user-select: none;
+    }
+    .svc-chip:hover { border-color: var(--m4); background: #f0f7e0; }
+    .svc-chip.on { border-color: var(--m2); background: var(--mp); color: var(--m1); font-weight: 600; }
+    .svc-chip.on .dot { background: var(--m3); }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: #c8b888; flex-shrink: 0; transition: background .15s; }
+
+    /* ── SPA ── */
+    .spa-chip {
+      border: 2px solid #c8a840; border-radius: 12px;
+      padding: 14px 16px; cursor: pointer; background: #fdf8e8;
+      display: flex; align-items: center; gap: 12px;
+      transition: all .15s; user-select: none; margin-top: 10px;
+    }
+    .spa-chip:hover { border-color: var(--g2); background: #fdf4d0; }
+    .spa-chip.on { border-color: var(--g1); background: #fdf0a8; }
+    .spa-chip.on .spa-dot { background: var(--g1); }
+    .spa-dot { width: 10px; height: 10px; border-radius: 50%; background: #d4b840; flex-shrink: 0; }
+    .spa-text { flex: 1; }
+    .spa-name { font-size: 14px; color: #5a3c00; font-weight: 600; }
+    .spa-desc { font-size: 11px; color: #8a6820; margin-top: 2px; }
+    .spa-badge { font-size: 10px; background: var(--g2); color: #fff; padding: 3px 8px; border-radius: 5px; font-weight: 600; flex-shrink: 0; }
+
+    /* ── RESUMEN SELECCIÓN ── */
+    .selection-summary {
+      background: #f0f7e4; border: 1.5px solid #b8d4a0;
+      border-radius: 10px; padding: 11px 14px;
+      margin-top: 10px; display: none;
+    }
+    .selection-summary.show { display: block; }
+    .ss-label { font-size: 11px; color: var(--m3); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+    .ss-items { display: flex; flex-wrap: wrap; gap: 6px; }
+    .ss-tag { background: var(--m2); color: #d4ecc0; font-size: 12px; padding: 4px 10px; border-radius: 6px; font-weight: 600; }
+    .ss-tag.gold { background: var(--g1); color: #fdf0c0; }
+
+    /* ── BARBEROS ── */
+    .barb-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 4px; }
+    .barb-tile {
+      border: 1.5px solid var(--beige2); border-radius: 12px;
+      padding: 13px 6px 10px; text-align: center;
+      cursor: pointer; background: #fdfaf4; transition: all .15s;
+    }
+    .barb-tile:hover { border-color: var(--m4); background: #f0f7e0; }
+    .barb-tile.on { border-color: var(--m2); background: var(--mp); }
+    .barb-tile.on .barb-av { border-color: var(--m3); }
+    .barb-av {
+      width: 44px; height: 44px; border-radius: 50%;
+      margin: 0 auto 8px; display: flex; align-items: center;
+      justify-content: center; font-size: 13px; font-weight: 600;
+      border: 2px solid transparent; transition: border-color .15s;
+    }
+    .barb-nm { font-size: 11px; color: #2a2010; font-weight: 600; line-height: 1.3; }
+    .barb-rl { font-size: 10px; color: #7a6a40; margin-top: 2px; }
+
+    /* ── HORA ── */
+    .hora-hint {
+      font-size: 12px; color: #6a5820; margin-bottom: 8px;
+      padding: 8px 12px; background: #fdf4d8;
+      border-radius: 8px; border: 1px solid #d9c070;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .hora-hint svg { width: 13px; height: 13px; fill: var(--g2); flex-shrink: 0; }
+    .hora-closed {
+      background: #fff0f0; border: 1.5px solid #ffb4b4;
+      border-radius: 10px; padding: 12px 14px;
+      color: #c0392b; font-size: 13px; font-weight: 600;
+      text-align: center; display: none;
+    }
+
+    /* ── BOTÓN STICKY ── */
+    .sticky-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--bg-card); border-top: 2px solid var(--beige2);
+      padding: 14px 20px 18px; z-index: 100;
+      box-shadow: 0 -4px 20px rgba(26,58,16,.10);
+    }
+    .sticky-inner { max-width: 560px; margin: 0 auto; }
+    .btn-cta {
+      width: 100%; padding: 17px;
+      background: var(--m1); color: #f5f0e4;
+      border: none; border-radius: 13px;
+      font-size: 16px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 11px; letter-spacing: .2px;
+      transition: background .2s, transform .1s;
+      box-shadow: 0 4px 16px rgba(26,58,16,.28);
+      font-family: inherit;
+    }
+    .btn-cta:hover { background: var(--m2); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,58,16,.35); }
+    .btn-cta:active { transform: translateY(0); }
+    .btn-cta svg { width: 20px; height: 20px; fill: #f5f0e4; flex-shrink: 0; }
+    .btn-sub { color: #8a7a50; font-size: 11px; text-align: center; margin-top: 7px; }
+    .toast {
+      display: none; background: #1e7a38; color: #f0ead8;
+      border-radius: 10px; padding: 12px 18px; font-size: 13px;
+      text-align: center; margin-top: 10px; font-weight: 600;
+    }
+
+    /* ── FOOTER ── */
+    .footer { text-align: center; padding: 20px 16px 4px; color: #8a7a50; font-size: 12px; }
+    .footer-line { width: 40px; height: 2px; background: var(--beige2); border-radius: 2px; margin: 0 auto 12px; }
+
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 20px; }
+      .barb-grid { grid-template-columns: repeat(3, 1fr); }
+      .frow2 { grid-template-columns: 1fr; }
+      .sch-rows { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <img src="https://github.com/Mora95977/Barber/blob/main/logo.jpg?raw=true" alt="Logo Barbería Fusión">
-        <h1>Salón de Belleza y Barbería Fusión</h1>
-    </header>
-    
-    <div id="holidayNotice">
-        <button id="closeNotice" onclick="closeNotice()">✕</button>
-        <p><strong>Horario del Salón de belleza y Barbería:</strong><br>
-        Lunes a Jueves de 8am a 6:30pm, Viernes y Sábados de 8am a 7pm. <br>
-        El día Domingo estará <strong>CERRADO</strong>.</p>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-top">
+      <div class="logo-ring">
+        <img src="logo.jpg" alt="Logo Barbería Fusión" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-size:11px;color:#2a5218;font-weight:600;text-align:center;line-height:1.4;padding:6px\'>logo.jpg</span>'">
+      </div>
+      <h1>Salón de Belleza y Barbería Fusión</h1>
+      <p class="hero-city">San Marcos de Tarrazú</p>
+    </div>
+    <div class="hero-divider"></div>
+  </div>
+
+  <!-- HORARIO -->
+  <div class="schedule" id="sched">
+    <button class="schedule-close" onclick="document.getElementById('sched').style.display='none'">✕</button>
+    <div class="sch-title">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm.5 5v5.25l4.5 2.67-.75 1.23L11 13V7h1.5z"/></svg>
+      Horario de atención
+    </div>
+    <div class="sch-rows">
+      <div class="sch-row"><div class="sch-day">Lunes — Jueves</div><div class="sch-time">8:00 a.m. — 6:30 p.m.</div></div>
+      <div class="sch-row"><div class="sch-day">Viernes — Sábado</div><div class="sch-time">8:00 a.m. — 7:00 p.m.</div></div>
+      <div class="sch-row" style="grid-column:1/-1"><div class="sch-day">Domingo</div><div class="sch-closed">Cerrado</div></div>
+    </div>
+  </div>
+
+  <!-- AVISO -->
+  <div class="alert">
+    <div class="alert-ico">
+      <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 11H11V7h2v6zm0 4H11v-2h2v2z"/></svg>
+    </div>
+    <p>Llegar 10 minutos antes de su cita</p>
+  </div>
+
+  <!-- FORMULARIO -->
+  <div class="form-card">
+    <div class="fc-header">
+      <div class="fc-hico">
+        <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+      </div>
+      <div>
+        <div class="fc-htitle">Agendar cita</div>
+        <div class="fc-hsub">Completa los datos para reservar</div>
+      </div>
     </div>
 
-    <section>
-        <p><strong> Por favor llegar 10 minutos antes de la cita.</strong></p>
-        <form id="appointmentForm">
-            <label for="name"> Nombre:</label>
-            <input type="text" id="name" required placeholder="Ingresa tu nombre completo">
-            
-            <label for="service">️ Servicio:</label>
-            <select id="service">
-                <option value="Corte clásico">Corte clásico</option>
-                <option value="Corte Moderno (sombreados)">Corte Moderno (sombreados)</option>
-                <option value="Corte y barba">Corte y barba</option>
-                <option value="Estilismo">Estilismo</option>
-                <option value="Pestañas">Pestañas</option>
-                <option value="Manicura">Manicura</option>
-                <option value="Pedicura">Pedicura</option>
-            </select>
-            
-            <label for="barber">💈 Elige tu barbero o estilista:</label>
-            <select id="barber">
-                <option value="Pablo Barbershop">Pablo Barbershop</option>
-                <option value="Axel Barbershop">Axel Barbershop</option>
-                <option value="Mila LadyBarber">Mila LadyBarber</option>
-                  <option value="Isaac Barbershop">Isaac Barbershop</option>
-                <option value="Yendry Mora (Estilista)">Yendry Mora (Estilista)</option>
-            </select>
-            
-            <label for="date">📅 Fecha:</label>
-            <input type="date" id="date" required>
-            
-            <label for="time">🕒 Hora:</label>
-            <div class="time-container">
-                <select id="hour" required>
-                    <option value="01">01</option>
-                    <option value="02">02</option>
-                    <option value="03">03</option>
-                    <option value="04">04</option>
-                    <option value="05">05</option>
-                    <option value="06">06</option>
-                    <option value="07">07</option>
-                    <option value="08">08</option>
-                    <option value="09">09</option>
-                    <option value="10">10</option>
-                    <option value="11">11</option>
-                    <option value="12">12</option>
-                </select>
-                
-                <select id="minute" required>
-                    <option value="00">00</option>
-                    <option value="15">15</option>
-                    <option value="30">30</option>
-                    <option value="45">45</option>
-                </select>
+    <div class="fc-body">
 
-                <select id="ampm" required>
-                    <option value="AM">AM</option>
-                    <option value="PM">PM</option>
-                </select>
-            </div>
+      <!-- Nombre -->
+      <div class="fgroup">
+        <label class="flabel">Nombre completo</label>
+        <input class="finput" id="fn" type="text" placeholder="Escribe tu nombre completo">
+      </div>
 
-            <button type="button" onclick="sendWhatsApp()">📱 Confirmar Cita por WhatsApp</button>
-        </form>
-    </section>
+      <!-- Servicios -->
+      <div class="fgroup">
+        <label class="flabel">Servicio</label>
+        <div class="svc-section-label">Elige un servicio principal</div>
+        <div class="svc-grid">
+          <div class="svc-chip on" data-v="Corte clásico" onclick="pickSvc(this)"><span class="dot"></span>Corte clásico</div>
+          <div class="svc-chip" data-v="Corte Moderno (sombreados)" onclick="pickSvc(this)"><span class="dot"></span>Corte moderno</div>
+          <div class="svc-chip" data-v="Corte y barba" onclick="pickSvc(this)"><span class="dot"></span>Corte y barba</div>
+          <div class="svc-chip" data-v="Estilismo" onclick="pickSvc(this)"><span class="dot"></span>Estilismo</div>
+          <div class="svc-chip" data-v="Pestañas" onclick="pickSvc(this)"><span class="dot"></span>Pestañas</div>
+          <div class="svc-chip" data-v="Manicura" onclick="pickSvc(this)"><span class="dot"></span>Manicura</div>
+          <div class="svc-chip" data-v="Pedicura" onclick="pickSvc(this)"><span class="dot"></span>Pedicura</div>
+        </div>
+        <div class="svc-section-label" style="margin-top:14px">Agregar servicio premium (opcional)</div>
+        <div class="spa-chip" id="spa-chip" onclick="toggleSpa()">
+          <span class="spa-dot"></span>
+          <div class="spa-text">
+            <div class="spa-name">Premium Spa Facial</div>
+            <div class="spa-desc">Se puede combinar con cualquier servicio</div>
+          </div>
+          <span class="spa-badge">NUEVO</span>
+        </div>
+        <div class="selection-summary" id="summary">
+          <div class="ss-label">Tu selección</div>
+          <div class="ss-items" id="ss-items"></div>
+        </div>
+      </div>
 
-    <section id="adminSection">
-        <h2>🔐 Administración</h2>
-        <button onclick="generateExcel()">📊 Generar Reporte de Citas</button>
-        <button onclick="borrarCitas()">🗑️ Borrar Citas</button>
-        <table id="citasTable">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Servicio</th>
-                    <th>Barbero</th>
-                    <th>Fecha</th>
-                    <th>Hora</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </section>
+      <hr class="sep">
 
-    <script>
-        function closeNotice() {
-            document.getElementById("holidayNotice").style.display = "none";
-        }
+      <!-- Barberos -->
+      <div class="fgroup">
+        <label class="flabel">Barbero / Estilista</label>
+        <div class="barb-grid">
+          <div class="barb-tile on" data-v="Pablo Barbershop" onclick="pickBarb(this)">
+            <div class="barb-av" style="background:#d4ecc0;color:#1e4a0e">PB</div>
+            <div class="barb-nm">Pablo</div><div class="barb-rl">Barbershop</div>
+          </div>
+          <div class="barb-tile" data-v="Jorge Barbershop" onclick="pickBarb(this)">
+            <div class="barb-av" style="background:#d0e4f8;color:#0e2a4a">JB</div>
+            <div class="barb-nm">Jorge</div><div class="barb-rl">Barbershop</div>
+          </div>
+          <div class="barb-tile" data-v="Mila LadyBarber" onclick="pickBarb(this)">
+            <div class="barb-av" style="background:#f8d0e8;color:#4a0e2a">ML</div>
+            <div class="barb-nm">Mila</div><div class="barb-rl">LadyBarber</div>
+          </div>
+          <div class="barb-tile" data-v="Isaac Barbershop" onclick="pickBarb(this)">
+            <div class="barb-av" style="background:#e8dcc8;color:#3a2408">IB</div>
+            <div class="barb-nm">Isaac</div><div class="barb-rl">Barbershop</div>
+          </div>
+          <div class="barb-tile" data-v="Yendry Mora (Estilista)" onclick="pickBarb(this)">
+            <div class="barb-av" style="background:#fdf0c0;color:#6a4800">YM</div>
+            <div class="barb-nm">Yendry</div><div class="barb-rl">Estilista</div>
+          </div>
+        </div>
+      </div>
 
-        function sendWhatsApp() {
-            let name = document.getElementById("name").value;
-            let service = document.getElementById("service").value;
-            let barber = document.getElementById("barber").value;
-            let date = document.getElementById("date").value;
-            let hour = document.getElementById("hour").value;
-            let minute = document.getElementById("minute").value;
-            let ampm = document.getElementById("ampm").value;
-            
-            if (!name || !date || !hour || !minute || !ampm) {
-                alert("Por favor, completa todos los campos.");
-                return;
-            }
+      <hr class="sep">
 
-            let currentDate = new Date(date);
-            let currentDay = currentDate.getDay();
-            let timeInMinutes = parseInt(hour) * 60 + parseInt(minute);
-            if (ampm === "PM" && hour !== "12") timeInMinutes += 12 * 60;
+      <!-- Fecha y hora -->
+      <div class="frow2">
+        <div>
+          <label class="flabel">Fecha</label>
+          <input class="finput" id="fd" type="date" onchange="updateHoras()">
+        </div>
+        <div>
+          <label class="flabel">Hora disponible</label>
+          <div class="hora-hint" id="hora-hint">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm.5 5v5.25l4.5 2.67-.75 1.23L11 13V7h1.5z"/></svg>
+            <span id="hora-hint-text">Selecciona una fecha</span>
+          </div>
+          <select class="finput fsel" id="fhora" style="display:none"></select>
+          <div class="hora-closed" id="hora-closed">Domingo — Cerrado</div>
+        </div>
+      </div>
 
-            if ((currentDay >= 1 && currentDay <= 4 && (timeInMinutes < 480 || timeInMinutes > 1020)) ||
-                (currentDay === 5 && (timeInMinutes < 480 || timeInMinutes > 1200)) ||
-                (currentDay === 6 && (timeInMinutes < 480 || timeInMinutes > 1200))) {
-                alert("El horario seleccionado no es válido según el horario del salón.");
-                return;
-            }
+    </div>
+  </div>
 
-            let message = `Hola, quiero agendar una cita:\n\n👤 Nombre: ${name}\n✂️ Servicio: ${service}\n💈 Barbero/Estilista: ${barber}\n📅 Fecha: ${date}\n🕒 Hora: ${hour}:${minute} ${ampm}\n\nLegaré 10 minutos antes de la cita.`;
-            
-            let whatsappUrl = `https://api.whatsapp.com/send?phone=50684021824&text=${encodeURIComponent(message)}`;
-            window.open(whatsappUrl, "_blank");
-        }
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-line"></div>
+    © 2025 Salón de Belleza y Barbería Fusión — San Marcos de Tarrazú
+  </div>
 
-        function requestAdminAccess() {
-            let password = prompt("Ingrese la clave de administrador:");
-            if (password === "Pmyv1234") {
-                document.getElementById("adminSection").style.display = "block";
-                mostrarCitasEnTabla();
-            } else {
-                alert("Clave incorrecta");
-            }
-        }
+  <!-- BOTÓN STICKY -->
+  <div class="sticky-bar">
+    <div class="sticky-inner">
+      <button class="btn-cta" onclick="send()">
+        <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.12-.56-2.32-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
+        Confirmar cita por WhatsApp
+      </button>
+      <div class="btn-sub">Te redirigiremos a WhatsApp con tu reserva lista</div>
+      <div class="toast" id="toast">Abriendo WhatsApp con tu cita...</div>
+    </div>
+  </div>
 
-        function mostrarCitasEnTabla() {
-            const tabla = document.querySelector("#citasTable tbody");
-            tabla.innerHTML = "";
-            const citas = JSON.parse(localStorage.getItem("citasFusion")) || [];
+  <script>
+    let spaOn = false;
 
-            citas.forEach(cita => {
-                const fila = document.createElement("tr");
-                fila.innerHTML = `
-                    <td>${cita.Nombre}</td>
-                    <td>${cita.Servicio}</td>
-                    <td>${cita.Barbero}</td>
-                    <td>${cita.Fecha}</td>
-                    <td>${cita.Hora}</td>
-                `;
-                tabla.appendChild(fila);
-            });
-        }
+    function pickSvc(el) {
+      document.querySelectorAll('.svc-chip').forEach(e => e.classList.remove('on'));
+      el.classList.add('on');
+      updateSummary();
+    }
 
-        function generateExcel() {
-            const citas = JSON.parse(localStorage.getItem("citasFusion")) || [];
-            if (citas.length === 0) {
-                alert("No hay citas agendadas.");
-                return;
-            }
+    function toggleSpa() {
+      spaOn = !spaOn;
+      document.getElementById('spa-chip').classList.toggle('on', spaOn);
+      updateSummary();
+    }
 
-            const ws = XLSX.utils.json_to_sheet(citas);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Citas");
-            XLSX.writeFile(wb, "Reporte_Citas_Fusion.xlsx");
-        }
+    function updateSummary() {
+      const svc = document.querySelector('.svc-chip.on')?.dataset.v || '';
+      const s = document.getElementById('summary');
+      const items = document.getElementById('ss-items');
+      if (!svc && !spaOn) { s.classList.remove('show'); return; }
+      s.classList.add('show');
+      items.innerHTML = '';
+      if (svc) {
+        const t = document.createElement('span');
+        t.className = 'ss-tag'; t.textContent = svc; items.appendChild(t);
+      }
+      if (spaOn) {
+        const t = document.createElement('span');
+        t.className = 'ss-tag gold'; t.textContent = 'Premium Spa Facial'; items.appendChild(t);
+      }
+    }
 
-        function borrarCitas() {
-            if (confirm("¿Estás seguro de que deseas borrar todas las citas?")) {
-                localStorage.removeItem("citasFusion");
-                mostrarCitasEnTabla();
-                alert("Todas las citas han sido eliminadas.");
-            }
-        }
+    function pickBarb(el) {
+      document.querySelectorAll('.barb-tile').forEach(e => e.classList.remove('on'));
+      el.classList.add('on');
+    }
 
-        window.addEventListener("keydown", function(event) {
-            if (event.ctrlKey && event.shiftKey && event.key === "A") {
-                requestAdminAccess();
-            }
-        });
-    </script>
+    function pad(n) { return n.toString().padStart(2, '0'); }
+
+    function fmt(h, m) {
+      const ap = h < 12 ? 'AM' : 'PM';
+      const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+      return `${pad(h12)}:${pad(m)} ${ap}`;
+    }
+
+    function generateSlots(sh, sm, eh, em) {
+      const s = []; let h = sh, m = sm;
+      while (h < eh || (h === eh && m <= em)) {
+        s.push(fmt(h, m));
+        m += 30; if (m >= 60) { m = 0; h++; }
+      }
+      return s;
+    }
+
+    function updateHoras() {
+      const val = document.getElementById('fd').value;
+      const hint = document.getElementById('hora-hint');
+      const sel = document.getElementById('fhora');
+      const closed = document.getElementById('hora-closed');
+      const hintText = document.getElementById('hora-hint-text');
+
+      if (!val) {
+        hint.style.display = 'flex'; sel.style.display = 'none'; closed.style.display = 'none';
+        hintText.textContent = 'Selecciona una fecha'; return;
+      }
+
+      const day = new Date(val + 'T12:00:00').getDay();
+
+      if (day === 0) {
+        hint.style.display = 'none'; sel.style.display = 'none'; closed.style.display = 'block'; return;
+      }
+
+      closed.style.display = 'none';
+      const isFriSat = (day === 5 || day === 6);
+      const slots = isFriSat ? generateSlots(8, 0, 19, 0) : generateSlots(8, 0, 18, 30);
+      const label = isFriSat ? 'Vie–Sáb: 8:00 AM – 7:00 PM' : 'Lun–Jue: 8:00 AM – 6:30 PM';
+
+      sel.innerHTML = '';
+      slots.forEach(s => {
+        const o = document.createElement('option');
+        o.value = s; o.textContent = s; sel.appendChild(o);
+      });
+
+      hint.style.display = 'flex'; sel.style.display = 'block';
+      hintText.textContent = label;
+    }
+
+    function send() {
+      const n = document.getElementById('fn').value.trim();
+      const d = document.getElementById('fd').value;
+      if (!n || !d) { alert('Por favor completa nombre y fecha.'); return; }
+      const day = new Date(d + 'T12:00:00').getDay();
+      if (day === 0) { alert('El salón está cerrado los domingos. Por favor elige otro día.'); return; }
+      const hora = document.getElementById('fhora').value;
+      if (!hora) { alert('Por favor selecciona una hora.'); return; }
+      const svc = document.querySelector('.svc-chip.on')?.dataset.v || '';
+      if (!svc) { alert('Por favor selecciona un servicio.'); return; }
+      const barb = document.querySelector('.barb-tile.on')?.dataset.v || '';
+      const svcFinal = spaOn ? `${svc} + Premium Spa Facial` : svc;
+      const msg = `Hola, quiero agendar una cita:\n\n👤 Nombre: ${n}\n✂️ Servicio: ${svcFinal}\n💈 Barbero/Estilista: ${barb}\n📅 Fecha: ${d}\n🕒 Hora: ${hora}\n\nLlegaré 10 minutos antes.`;
+      window.open(`https://api.whatsapp.com/send?phone=50684021824&text=${encodeURIComponent(msg)}`, '_blank');
+      const t = document.getElementById('toast');
+      t.style.display = 'block';
+      setTimeout(() => t.style.display = 'none', 3000);
+    }
+
+    document.getElementById('fd').value = new Date().toISOString().split('T')[0];
+    updateHoras();
+    updateSummary();
+  </script>
+
 </body>
 </html>
 
