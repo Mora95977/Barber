@@ -254,8 +254,8 @@
       Horario de atención
     </div>
     <div class="sch-rows">
-      <div class="sch-row"><div class="sch-day">Lunes — Sábado</div><div class="sch-time">8:00 a.m. — 6:30 p.m.</div></div>
-    
+      <div class="sch-row"><div class="sch-day">Lunes — Jueves</div><div class="sch-time">8:00 a.m. — 6:30 p.m.</div></div>
+      <div class="sch-row"><div class="sch-day">Viernes — Sábado</div><div class="sch-time">8:00 a.m. — 7:00 p.m.</div></div>
       <div class="sch-row" style="grid-column:1/-1"><div class="sch-day">Domingo</div><div class="sch-closed">Cerrado</div></div>
     </div>
   </div>
@@ -457,7 +457,7 @@
       closed.style.display = 'none';
       const isFriSat = (day === 5 || day === 6);
       const slots = isFriSat ? generateSlots(8, 0, 19, 0) : generateSlots(8, 0, 18, 30);
-      const label = isFriSat ?  'Lun–Sáb: 8:00 AM – 6:30 PM';
+      const label = isFriSat ? 'Vie–Sáb: 8:00 AM – 7:00 PM' : 'Lun–Jue: 8:00 AM – 6:30 PM';
 
       sel.innerHTML = '';
       slots.forEach(s => {
@@ -495,6 +495,7 @@
 
 </body>
 </html>
+
 
  
 
